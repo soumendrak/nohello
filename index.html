@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Please don't say just hello in chat. Save time by asking your question directly in asynchronous communication.">
+    <meta property="og:title" content="No Hello - Communicate Efficiently">
+    <meta property="og:description" content="Stop saying just 'hello' and waiting. Ask your question directly and save everyone's time.">
+    <meta property="og:type" content="website">
+    <title>No Hello - Please Don't Say Just Hello</title>
+    
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Font Awesome with defer for non-blocking -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    
+    <!-- Optimized font loading with display=swap -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"></noscript>
+    
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .chat-bubble {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Prevent layout shift */
+        .scroll-fade-in {
+            content-visibility: auto;
+        }
+        
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            z-index: 1000;
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-to-top:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+        }
+        
+        .scroll-to-top:active {
+            transform: translateY(-2px);
+        }
+        
+        .comparison-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .comparison-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .scroll-fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            will-change: opacity, transform;
+        }
+        
+        .scroll-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+            will-change: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="mb-8">
+                <i class="fas fa-comment-slash text-6xl text-purple-600 mb-6"></i>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 gradient-text">
+                Please Don't Say Just Hello
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
+                Imagine calling someone on the phone, saying "hello," and then putting them on hold. That's what you're doing when you say just "hello" in chat.
+            </p>
+            <a href="#why" class="inline-flex items-center gap-2 bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl">
+                Learn Why
+                <i class="fas fa-arrow-down scroll-indicator"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Problem Demonstration -->
+    <section id="why" class="py-20 px-4 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+                The Problem
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <!-- Bad Example -->
+                <div class="comparison-card bg-red-50 border-2 border-red-200 rounded-2xl p-8 scroll-fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i class="fas fa-times-circle text-3xl text-red-600"></i>
+                        <h3 class="text-2xl font-bold text-red-900">Don't Do This</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-red-300 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-red-700 text-sm"></i>
+                                </div>
+                                <span class="font-semibold text-sm">You</span>
+                                <span class="text-xs text-gray-500">2:31 PM</span>
+                            </div>
+                            <p class="text-gray-800">Hi Soumendra</p>
+                        </div>
+                        
+                        <div class="chat-bubble bg-gray-100 rounded-lg p-4 flex items-center gap-2">
+                            <div class="typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span class="text-sm text-gray-500 ml-2">waiting for response...</span>
+                        </div>
+                        
+                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-700 text-sm"></i>
+                                </div>
+                                <span class="font-semibold text-sm">Soumendra</span>
+                                <span class="text-xs text-gray-500">2:45 PM</span>
+                            </div>
+                            <p class="text-gray-800">Hi! What's up?</p>
+                        </div>
+                        
+                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-red-300 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-red-700 text-sm"></i>
+                                </div>
+                                <span class="font-semibold text-sm">You</span>
+                                <span class="text-xs text-gray-500">2:46 PM</span>
+                            </div>
+                            <p class="text-gray-800">Can you help me with the deployment issue?</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-red-100 rounded-lg">
+                        <p class="text-sm text-red-800">
+                            <i class="fas fa-clock mr-2"></i>
+                            <strong>15 minutes wasted</strong> waiting for a response
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Good Example -->
+                <div class="comparison-card bg-green-50 border-2 border-green-200 rounded-2xl p-8 scroll-fade-in">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i class="fas fa-check-circle text-3xl text-green-600"></i>
+                        <h3 class="text-2xl font-bold text-green-900">Do This Instead</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-green-300 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-green-700 text-sm"></i>
+                                </div>
+                                <span class="font-semibold text-sm">You</span>
+                                <span class="text-xs text-gray-500">2:31 PM</span>
+                            </div>
+                            <p class="text-gray-800">Hi Soumendra! Can you help me with the deployment issue? I'm getting a 500 error when pushing to production. Here's the error log: [link]</p>
+                        </div>
+                        
+                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-700 text-sm"></i>
+                                </div>
+                                <span class="font-semibold text-sm">Soumendra</span>
+                                <span class="text-xs text-gray-500">2:45 PM</span>
+                            </div>
+                            <p class="text-gray-800">I see the issue! You need to update the environment variables. Check your .env file...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-green-100 rounded-lg">
+                        <p class="text-sm text-green-800">
+                            <i class="fas fa-bolt mr-2"></i>
+                            <strong>Efficient communication</strong> - problem solved immediately
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why This Matters -->
+    <section class="py-20 px-4 bg-gray-50">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 scroll-fade-in">
+                Why This Matters
+            </h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl p-8 shadow-lg scroll-fade-in">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-clock text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Respects Time</h3>
+                    <p class="text-gray-600">
+                        Your colleague can respond when available without being held hostage by a conversation that hasn't started yet.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-8 shadow-lg scroll-fade-in">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-globe text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Async-First</h3>
+                    <p class="text-gray-600">
+                        Remote teams work across time zones. Async communication means providing context upfront, not waiting for acknowledgment.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-8 shadow-lg scroll-fade-in">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-brain text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Better Focus</h3>
+                    <p class="text-gray-600">
+                        Reduces context switching. Your colleague can read your full message and respond thoughtfully in one go.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- More Examples -->
+    <section class="py-20 px-4 bg-white">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 scroll-fade-in">
+                More Examples
+            </h2>
+            
+            <div class="space-y-8">
+                <!-- Example 1 -->
+                <div class="grid md:grid-cols-2 gap-6 scroll-fade-in">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-times text-red-600"></i>
+                            <span class="font-bold text-red-900">Bad</span>
+                        </div>
+                        <p class="text-gray-800">"Hey Soumendra, are you there?"</p>
+                        <p class="text-sm text-gray-600 mt-2 italic">Forces synchronous response</p>
+                    </div>
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-check text-green-600"></i>
+                            <span class="font-bold text-green-900">Good</span>
+                        </div>
+                        <p class="text-gray-800">"Hey Soumendra! Quick question about the API docs - where can I find the authentication endpoints?"</p>
+                        <p class="text-sm text-gray-600 mt-2 italic">Can be answered anytime</p>
+                    </div>
+                </div>
+                
+                <!-- Example 2 -->
+                <div class="grid md:grid-cols-2 gap-6 scroll-fade-in">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-times text-red-600"></i>
+                            <span class="font-bold text-red-900">Bad</span>
+                        </div>
+                        <p class="text-gray-800">"Hi Soumendra, do you have a minute?"</p>
+                        <p class="text-sm text-gray-600 mt-2 italic">Vague and anxiety-inducing</p>
+                    </div>
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-check text-green-600"></i>
+                            <span class="font-bold text-green-900">Good</span>
+                        </div>
+                        <p class="text-gray-800">"Hi Soumendra! I need help reviewing the PR #234 when you have 10 minutes. No rush, just want your feedback on the new caching logic."</p>
+                        <p class="text-sm text-gray-600 mt-2 italic">Clear context and expectations</p>
+                    </div>
+                </div>
+                
+                <!-- Example 3 -->
+                <div class="grid md:grid-cols-2 gap-6 scroll-fade-in">
+                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-times text-red-600"></i>
+                            <span class="font-bold text-red-900">Bad</span>
+                        </div>
+                        <p class="text-gray-800">"Ping"</p>
+                        <p class="text-sm text-gray-600 mt-2 italic">Zero information provided</p>
+                    </div>
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-check text-green-600"></i>
+                            <span class="font-bold text-green-900">Good</span>
+                        </div>
+                        <p class="text-gray-800">"The staging server is down. I've checked the logs and it seems like a database connection issue. Can you take a look?"</p>
+                        <p class="text-sm text-gray-600 mt-2 italic">Actionable with context</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20 px-4 bg-gradient-to-br from-purple-600 to-blue-600 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                Spread the Word
+            </h2>
+            <p class="text-xl md:text-2xl mb-12 opacity-90">
+                Help your team communicate more efficiently. Share this page!
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button onclick="copyLink()" class="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2">
+                    <i class="fas fa-link"></i>
+                    Copy Link
+                </button>
+                <a href="https://twitter.com/intent/tweet?text=Please%20don%27t%20say%20just%20hello%20in%20chat.%20Ask%20your%20question%20directly!&url=" target="_blank" rel="noopener" class="bg-white text-blue-500 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2">
+                    <i class="fab fa-twitter"></i>
+                    Share on Twitter
+                </a>
+            </div>
+            
+            <div id="copyNotification" class="hidden bg-green-500 text-white px-6 py-3 rounded-lg inline-block shadow-lg">
+                <i class="fas fa-check mr-2"></i>
+                Link copied to clipboard!
+            </div>
+        </div>
+    </section>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 bg-gray-900 text-gray-400">
+        <div class="max-w-4xl mx-auto text-center">
+            <p class="mb-4">
+                Inspired by <a href="https://nohello.net" target="_blank" rel="noopener" class="text-purple-400 hover:text-purple-300 underline">nohello.net</a> and the async-first communication movement.
+            </p>
+            <p class="text-sm">
+                Built with ❤️ for better communication by <span class="text-purple-400 font-semibold">Soumendra</span>.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Use requestIdleCallback for non-critical animations
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Stop observing once visible
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.scroll-fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        
+        // Defer non-critical initialization
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initScrollAnimations);
+        } else {
+            setTimeout(initScrollAnimations, 1);
+        }
+
+        // Copy link functionality
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const notification = document.getElementById('copyNotification');
+                notification.classList.remove('hidden');
+                setTimeout(() => notification.classList.add('hidden'), 3000);
+            });
+        }
+
+        // Smooth scroll for anchor links (delegated event)
+        document.addEventListener('click', (e) => {
+            const anchor = e.target.closest('a[href^="#"]');
+            if (anchor) {
+                e.preventDefault();
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, { passive: false });
+
+        // Scroll to top button functionality with throttling
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        let scrollTimeout;
+        
+        // Throttled scroll handler
+        window.addEventListener('scroll', () => {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
+                scrollToTopBtn.classList.toggle('visible', window.pageYOffset > 300);
+                scrollTimeout = null;
+            }, 100);
+        }, { passive: true });
+        
+        // Scroll to top when button is clicked
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
