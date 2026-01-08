@@ -631,18 +631,18 @@
                         <div class="flex-1 max-w-md">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-gray-400 text-sm font-medium">Customer Frustration</span>
-                                <span class="text-yellow-400 font-bold">65%</span>
+                                <span id="tm-frustration-text" class="text-green-400 font-bold">0%</span>
                             </div>
                             <div class="h-3 bg-gray-700 rounded-full overflow-hidden relative">
                                 <div class="tm-frustration-bar h-full w-full absolute"></div>
-                                <div class="tm-frustration-fill h-full absolute right-0" style="width: 35%;"></div>
+                                <div id="tm-frustration-fill" class="tm-frustration-fill h-full absolute right-0" style="width: 100%;"></div>
                             </div>
                         </div>
 
                         <!-- Timer -->
-                        <div class="flex items-center gap-2 text-white">
-                            <i class="fas fa-clock text-yellow-400"></i>
-                            <span class="font-mono text-2xl font-bold">1:42</span>
+                        <div id="tm-timer-container" class="flex items-center gap-2 text-white">
+                            <i id="tm-timer-icon" class="fas fa-clock text-green-400"></i>
+                            <span id="tm-timer" class="font-mono text-2xl font-bold">2:00</span>
                         </div>
                     </div>
 
@@ -979,7 +979,11 @@
             // Game state
             state: {
                 selectedSpanId: "span-1",
-                isPlaying: false
+                isPlaying: true,
+                timeRemaining: 120, // seconds
+                frustration: 0, // percentage
+                timerInterval: null,
+                isPaused: false
             },
 
             // DOM element references
@@ -991,6 +995,7 @@
                 this.renderSpans();
                 this.bindEvents();
                 this.selectSpan("span-1");
+                this.startTimer();
             },
 
             // Cache DOM elements for performance
@@ -1000,8 +1005,134 @@
                     spansMobile: document.getElementById('tm-spans-mobile'),
                     logViewer: document.getElementById('tm-log-viewer'),
                     logTitle: document.getElementById('tm-log-title'),
-                    logContent: document.getElementById('tm-log-content')
+                    logContent: document.getElementById('tm-log-content'),
+                    timer: document.getElementById('tm-timer'),
+                    timerIcon: document.getElementById('tm-timer-icon'),
+                    timerContainer: document.getElementById('tm-timer-container'),
+                    frustrationText: document.getElementById('tm-frustration-text'),
+                    frustrationFill: document.getElementById('tm-frustration-fill')
                 };
+            },
+
+            // Start the game timer
+            startTimer() {
+                this.state.timeRemaining = this.currentLevel.timeLimit;
+                this.state.frustration = 0;
+                this.state.isPlaying = true;
+                this.state.isPaused = false;
+                this.updateTimerDisplay();
+                this.updateFrustrationDisplay();
+
+                // Clear any existing interval
+                if (this.state.timerInterval) {
+                    clearInterval(this.state.timerInterval);
+                }
+
+                // Start game loop (tick every 100ms for smooth frustration updates)
+                this.state.timerInterval = setInterval(() => this.gameTick(), 100);
+            },
+
+            // Game tick (runs every 100ms)
+            gameTick() {
+                if (!this.state.isPlaying || this.state.isPaused) return;
+
+                // Decrease time (0.1 second per tick)
+                this.state.timeRemaining -= 0.1;
+
+                // Increase frustration based on level's frustration rate
+                this.state.frustration += this.currentLevel.frustrationRate * 0.1;
+
+                // Clamp values
+                this.state.timeRemaining = Math.max(0, this.state.timeRemaining);
+                this.state.frustration = Math.min(100, this.state.frustration);
+
+                // Update displays
+                this.updateTimerDisplay();
+                this.updateFrustrationDisplay();
+
+                // Check for game over
+                if (this.state.frustration >= 100 || this.state.timeRemaining <= 0) {
+                    this.gameOver();
+                }
+            },
+
+            // Update timer display
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.state.timeRemaining / 60);
+                const seconds = Math.floor(this.state.timeRemaining % 60);
+                this.elements.timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                // Color based on time remaining
+                const percentRemaining = (this.state.timeRemaining / this.currentLevel.timeLimit) * 100;
+                let colorClass, iconColor;
+                
+                if (percentRemaining > 50) {
+                    colorClass = 'text-white';
+                    iconColor = 'text-green-400';
+                } else if (percentRemaining > 25) {
+                    colorClass = 'text-yellow-400';
+                    iconColor = 'text-yellow-400';
+                    this.elements.timerContainer.classList.remove('tm-pulse');
+                } else {
+                    colorClass = 'text-red-400';
+                    iconColor = 'text-red-400';
+                    this.elements.timerContainer.classList.add('tm-pulse');
+                }
+
+                this.elements.timer.className = `font-mono text-2xl font-bold ${colorClass}`;
+                this.elements.timerIcon.className = `fas fa-clock ${iconColor}`;
+            },
+
+            // Update frustration meter display
+            updateFrustrationDisplay() {
+                const frustration = Math.round(this.state.frustration);
+                this.elements.frustrationText.textContent = `${frustration}%`;
+
+                // Update fill (inverse - fill covers the unfilled portion)
+                const fillWidth = 100 - frustration;
+                this.elements.frustrationFill.style.width = `${fillWidth}%`;
+
+                // Color based on frustration level
+                let colorClass;
+                if (frustration < 40) {
+                    colorClass = 'text-green-400';
+                } else if (frustration < 70) {
+                    colorClass = 'text-yellow-400';
+                } else {
+                    colorClass = 'text-red-400';
+                }
+                this.elements.frustrationText.className = `${colorClass} font-bold`;
+            },
+
+            // Pause the timer
+            pauseTimer() {
+                this.state.isPaused = true;
+            },
+
+            // Resume the timer
+            resumeTimer() {
+                this.state.isPaused = false;
+            },
+
+            // Stop the timer completely
+            stopTimer() {
+                this.state.isPlaying = false;
+                if (this.state.timerInterval) {
+                    clearInterval(this.state.timerInterval);
+                    this.state.timerInterval = null;
+                }
+            },
+
+            // Game over (frustration hit 100% or time ran out)
+            gameOver() {
+                this.stopTimer();
+                this.showModal(false, true); // false = not success, true = timeout
+            },
+
+            // Add frustration penalty for wrong answer
+            addFrustrationPenalty() {
+                this.state.frustration = Math.min(100, this.state.frustration + 10);
+                this.updateFrustrationDisplay();
             },
 
             // Render spans from data
@@ -1219,9 +1350,12 @@
 
             // Submit an action (fix attempt)
             submitAction(action) {
+                if (!this.state.isPlaying) return; // Ignore if game is over
+                
                 const isCorrect = action === this.currentLevel.correctAction;
                 
                 if (isCorrect) {
+                    this.stopTimer();
                     this.showModal(true);
                 } else {
                     // Shake the game container for wrong answer
@@ -1229,23 +1363,42 @@
                     gameEl.classList.add('tm-shake');
                     setTimeout(() => gameEl.classList.remove('tm-shake'), 500);
                     
-                    // Show failure modal
-                    this.showModal(false);
+                    // Add frustration penalty (+10%)
+                    this.addFrustrationPenalty();
+                    
+                    // Don't show modal for wrong answer - let them keep trying
+                    // Only show modal if frustration hits 100%
                 }
             },
 
             // Show result modal
-            showModal(isSuccess) {
+            showModal(isSuccess, isTimeout = false) {
+                // Pause timer when modal is shown
+                this.pauseTimer();
+                
                 const modal = document.getElementById('tm-modal');
                 const successEl = document.getElementById('tm-modal-success');
                 const failureEl = document.getElementById('tm-modal-failure');
                 const explanationEl = document.getElementById('tm-modal-explanation');
                 const nextBtn = document.getElementById('tm-modal-next');
                 const retryBtn = document.getElementById('tm-modal-retry');
+                const failureTitle = failureEl.querySelector('h3');
+                const failureSubtitle = failureEl.querySelector('p');
 
                 // Show/hide success/failure states
                 successEl.classList.toggle('hidden', !isSuccess);
                 failureEl.classList.toggle('hidden', isSuccess);
+
+                // Update failure message based on timeout vs wrong answer
+                if (!isSuccess && failureTitle && failureSubtitle) {
+                    if (isTimeout) {
+                        failureTitle.textContent = 'Time\'s Up!';
+                        failureSubtitle.textContent = 'The customer lost patience.';
+                    } else {
+                        failureTitle.textContent = 'Wrong Fix!';
+                        failureSubtitle.textContent = 'That wasn\'t the root cause.';
+                    }
+                }
 
                 // Show explanation
                 explanationEl.textContent = this.currentLevel.explanation;
@@ -1253,7 +1406,6 @@
                 // Show/hide buttons based on result
                 if (isSuccess) {
                     nextBtn.classList.remove('hidden');
-                    retryBtn.textContent = 'Play Again';
                     retryBtn.innerHTML = '<i class="fas fa-redo mr-2"></i>Play Again';
                 } else {
                     nextBtn.classList.add('hidden');
@@ -1274,6 +1426,7 @@
                 this.state.selectedSpanId = 'span-1';
                 this.renderSpans();
                 this.selectSpan('span-1');
+                this.startTimer(); // Restart the timer
             },
 
             // Select a span and show its logs
