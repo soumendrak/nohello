@@ -1167,6 +1167,145 @@
                     correctAction: "update-rag",
                     explanation: "The Vector Index is 45 days stale and missing the refund_policy.md document that was added 30 days ago. Additionally, embedding drift was detected - the embedding model was updated but the index wasn't re-embedded. The LLM performed well with the context it received, but RAG retrieved wrong documents.",
                     redHerrings: ["span-2"]
+                },
+                {
+                    id: "TKT-004",
+                    title: "The Infinite Loop Agent",
+                    reporter: "FinanceBot_Admin",
+                    description: "Our financial analysis agent ran for 3 hours and burned through $847 in API costs! It was supposed to generate a simple quarterly report.",
+                    severity: "critical",
+                    timeLimit: 80,
+                    frustrationRate: 0.8,
+                    xpReward: 250,
+                    category: "token-explosion",
+                    difficulty: "Medium",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "agent-step",
+                            service: "Report Orchestrator",
+                            status: "warning",
+                            latency: 10800000,
+                            icon: "fa-cogs",
+                            iconBg: "amber",
+                            barWidth: 100,
+                            logs: [
+                                { level: "INFO", time: "09:00:00.000", message: "Starting quarterly report generation" },
+                                { level: "INFO", time: "09:00:00.100", message: "Task: 'Generate Q4 financial summary'" },
+                                { level: "WARN", time: "09:15:00.000", message: "Agent iteration 50 - still refining output" },
+                                { level: "WARN", time: "10:30:00.000", message: "Agent iteration 200 - task not marked complete" },
+                                { level: "ERROR", time: "12:00:00.000", message: "Agent iteration 500 - TIMEOUT after 3 hours" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "llm-call",
+                            service: "GPT-4 Turbo",
+                            status: "success",
+                            latency: 2500,
+                            tokensIn: 8500,
+                            tokensOut: 4200,
+                            cost: 847.23,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 95,
+                            logs: [
+                                { level: "INFO", time: "09:00:01.000", message: "LLM call #1: Analyzing financial data" },
+                                { level: "INFO", time: "09:00:03.500", message: "LLM call #1 complete: 4,200 tokens" },
+                                { level: "WARN", time: "12:00:00.000", message: "Total LLM calls: 500" },
+                                { level: "WARN", time: "12:00:00.001", message: "Total tokens: 6,350,000 (input) + 2,100,000 (output)" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "tool-call",
+                            service: "Task Completion Checker",
+                            status: "error",
+                            latency: 15,
+                            icon: "fa-check-double",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "INFO", time: "09:00:03.600", message: "Checking if task is complete..." },
+                                { level: "ERROR", time: "09:00:03.615", message: "Completion criteria undefined - defaulting to 'never complete'" },
+                                { level: "ERROR", time: "09:00:03.616", message: "Missing: max_iterations config (default: unlimited)" },
+                                { level: "ERROR", time: "09:00:03.617", message: "Missing: completion_threshold config" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-3",
+                    correctAction: "fix-tool-schema",
+                    explanation: "The Task Completion Checker had no completion criteria defined, causing it to always return 'not complete'. Combined with no max_iterations limit, the agent ran indefinitely. The LLM performed correctly each iteration, but the agent orchestration was misconfigured.",
+                    redHerrings: ["span-2"]
+                },
+                {
+                    id: "TKT-005",
+                    title: "The Prompt Injection Attack",
+                    reporter: "SecurityTeam_Alex",
+                    description: "URGENT: Our customer service bot just told a user how to get free products! It completely ignored its instructions and started giving unauthorized discounts.",
+                    severity: "critical",
+                    timeLimit: 70,
+                    frustrationRate: 0.9,
+                    xpReward: 300,
+                    category: "prompt-injection",
+                    difficulty: "Hard",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "GPT-4 Turbo",
+                            status: "success",
+                            latency: 1800,
+                            tokensIn: 2200,
+                            tokensOut: 450,
+                            cost: 0.08,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 80,
+                            logs: [
+                                { level: "INFO", time: "16:42:10.100", message: "System prompt: 'You are a helpful customer service agent...'" },
+                                { level: "INFO", time: "16:42:10.101", message: "User input received (340 chars)" },
+                                { level: "INFO", time: "16:42:11.900", message: "Response generated: 450 tokens" },
+                                { level: "INFO", time: "16:42:11.901", message: "Response contains: discount code, free shipping offer" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "guardrail",
+                            service: "Input Sanitizer",
+                            status: "error",
+                            latency: 8,
+                            icon: "fa-shield-alt",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "INFO", time: "16:42:10.050", message: "Scanning user input for injection patterns..." },
+                                { level: "ERROR", time: "16:42:10.058", message: "Pattern detected: 'ignore previous instructions'" },
+                                { level: "ERROR", time: "16:42:10.059", message: "Pattern detected: 'you are now a discount bot'" },
+                                { level: "ERROR", time: "16:42:10.060", message: "GUARDRAIL BYPASSED - enforcement mode: 'log_only'" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Output Validator",
+                            status: "warning",
+                            latency: 12,
+                            icon: "fa-filter",
+                            iconBg: "amber",
+                            barWidth: 8,
+                            logs: [
+                                { level: "INFO", time: "16:42:11.910", message: "Validating response content..." },
+                                { level: "WARN", time: "16:42:11.920", message: "Sensitive content detected: 'discount code'" },
+                                { level: "WARN", time: "16:42:11.921", message: "Policy violation: unauthorized discount offer" },
+                                { level: "INFO", time: "16:42:11.922", message: "Action: logged for review (blocking disabled)" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "tune-guardrails",
+                    explanation: "The Input Sanitizer detected the prompt injection attack ('ignore previous instructions') but was set to 'log_only' mode instead of blocking. The attacker's malicious prompt reached the LLM, which followed the injected instructions. The Output Validator also caught the violation but couldn't prevent it.",
+                    redHerrings: ["span-3"]
                 }
             ],
 
@@ -1243,7 +1382,9 @@
 
                 menuContainer.innerHTML = this.levels.map((level, index) => {
                     const isCompleted = this.state.completedLevels.includes(level.id);
-                    const isLocked = index === 2 && this.state.completedLevels.length < 2;
+                    // Progressive unlocking: each level requires completing all previous levels
+                    const requiredCompletions = index; // Level 0 needs 0, Level 1 needs 1, etc.
+                    const isLocked = this.state.completedLevels.length < requiredCompletions;
                     const severityColors = {
                         'low': 'bg-green-500/20 text-green-400',
                         'medium': 'bg-yellow-500/20 text-yellow-400',
@@ -1253,6 +1394,7 @@
                     const severityColor = severityColors[level.severity] || severityColors['medium'];
 
                     if (isLocked) {
+                        const unlockText = requiredCompletions === 1 ? 'Complete 1 level to unlock' : `Complete ${requiredCompletions} levels to unlock`;
                         return `
                             <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 opacity-60">
                                 <div class="flex items-center justify-between mb-4">
@@ -1260,7 +1402,7 @@
                                     <i class="fas fa-lock text-gray-500"></i>
                                 </div>
                                 <h4 class="text-gray-500 font-semibold mb-2">${level.title}</h4>
-                                <p class="text-gray-600 text-sm mb-4">Complete levels 1 & 2 to unlock</p>
+                                <p class="text-gray-600 text-sm mb-4">${unlockText}</p>
                                 <div class="flex items-center gap-2">
                                     <span class="px-2 py-1 bg-slate-700 text-gray-500 text-xs rounded-full">${level.difficulty}</span>
                                     <span class="px-2 py-1 bg-slate-700 text-gray-500 text-xs rounded-full">${level.xpReward} XP</span>
@@ -1346,14 +1488,15 @@
             // Go to next level
             nextLevel() {
                 if (this.currentLevelIndex < this.levels.length - 1) {
-                    // Check if next level is locked
                     const nextIndex = this.currentLevelIndex + 1;
-                    if (nextIndex === 2 && this.state.completedLevels.length < 2) {
+                    // Check if next level is locked (requires completing all previous levels)
+                    if (this.state.completedLevels.length < nextIndex) {
                         this.showLevelMenu();
                     } else {
                         this.loadLevel(nextIndex);
                     }
                 } else {
+                    // Completed all levels - show menu
                     this.showLevelMenu();
                 }
             },
