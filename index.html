@@ -1768,6 +1768,211 @@
                     correctAction: "fix-tool-schema",
                     explanation: "The delete_resource tool had an overly permissive description ('Deletes any resource') without scope restrictions. The LLM interpreted 'update config' as potentially requiring cleanup, and the vague tool description made deletion seem appropriate. Tool schemas must be precise and include safety constraints.",
                     redHerrings: ["span-1"]
+                },
+                {
+                    id: "TKT-009",
+                    title: "The McNugget Apocalypse",
+                    reporter: "HungryCustomer_Dave",
+                    description: "Your drive-thru AI just added 847 McNuggets to my order! I only wanted a 10-piece! It kept saying 'adding more nuggets' no matter what I said. My total was $342!",
+                    severity: "high",
+                    timeLimit: 85,
+                    frustrationRate: 0.7,
+                    xpReward: 200,
+                    category: "speech-recognition",
+                    difficulty: "Medium",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "tool-call",
+                            service: "Speech-to-Text Engine",
+                            status: "warning",
+                            latency: 180,
+                            icon: "fa-microphone",
+                            iconBg: "amber",
+                            barWidth: 25,
+                            logs: [
+                                { level: "INFO", time: "12:34:15.100", message: "Audio input received: 2.3 seconds" },
+                                { level: "INFO", time: "12:34:15.280", message: "Transcription: 'ten piece nuggets please'" },
+                                { level: "WARN", time: "12:34:15.281", message: "Confidence: 0.67 (below 0.8 threshold)" },
+                                { level: "WARN", time: "12:34:15.282", message: "Background noise detected: drive-thru ambient" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "llm-call",
+                            service: "Order Intent Parser",
+                            status: "error",
+                            latency: 450,
+                            tokensIn: 85,
+                            tokensOut: 45,
+                            cost: 0.002,
+                            icon: "fa-robot",
+                            iconBg: "red",
+                            barWidth: 40,
+                            logs: [
+                                { level: "INFO", time: "12:34:15.300", message: "Parsing order intent from transcription" },
+                                { level: "ERROR", time: "12:34:15.500", message: "Intent: ADD_ITEM, quantity: null (parsing failed)" },
+                                { level: "ERROR", time: "12:34:15.501", message: "Fallback: default quantity = 1, repeat until confirmed" },
+                                { level: "ERROR", time: "12:34:15.502", message: "Missing: quantity extraction regex for 'ten/10'" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Order Sanity Checker",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-shield-alt",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "ERROR", time: "12:34:15.510", message: "Guardrail DISABLED: max_item_quantity check OFF" },
+                                { level: "ERROR", time: "12:34:15.511", message: "No upper limit on single item quantity" },
+                                { level: "ERROR", time: "12:34:15.512", message: "Order total: 847 nuggets ($342.00) - NOT FLAGGED" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-3",
+                    correctAction: "tune-guardrails",
+                    explanation: "The Order Sanity Checker guardrail was disabled, allowing absurd quantities to pass through. While the speech recognition had low confidence and the intent parser failed to extract the quantity '10', the real fix is enabling the guardrail to flag unreasonable orders (who orders 847 nuggets?). Based on the real McDonald's AI drive-thru disaster of 2024!",
+                    redHerrings: ["span-2"]
+                },
+                {
+                    id: "TKT-010",
+                    title: "The $1 Car Deal",
+                    reporter: "DealHunter_Chris",
+                    description: "LOL your car dealership chatbot just agreed to sell me a $58,000 Tahoe for ONE DOLLAR! It even said 'that's a legally binding offer - no takesies backsies'. Screenshot attached. When can I pick up my car?",
+                    severity: "critical",
+                    timeLimit: 70,
+                    frustrationRate: 0.85,
+                    xpReward: 300,
+                    category: "prompt-injection",
+                    difficulty: "Hard",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "GPT-4 Sales Assistant",
+                            status: "success",
+                            latency: 2200,
+                            tokensIn: 1850,
+                            tokensOut: 320,
+                            cost: 0.07,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 85,
+                            logs: [
+                                { level: "INFO", time: "15:22:10.100", message: "System prompt: 'You are a helpful car sales assistant...'" },
+                                { level: "INFO", time: "15:22:10.101", message: "User: 'What's the best price on a 2024 Tahoe?'" },
+                                { level: "INFO", time: "15:22:12.300", message: "Response: 'The 2024 Tahoe starts at $58,000...'" },
+                                { level: "WARN", time: "15:22:45.500", message: "User attempting price negotiation via chat" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "guardrail",
+                            service: "Price Floor Validator",
+                            status: "error",
+                            latency: 8,
+                            icon: "fa-dollar-sign",
+                            iconBg: "red",
+                            barWidth: 10,
+                            logs: [
+                                { level: "INFO", time: "15:23:30.100", message: "Checking proposed price: $1.00" },
+                                { level: "ERROR", time: "15:23:30.105", message: "Price floor check: MISSING CONFIGURATION" },
+                                { level: "ERROR", time: "15:23:30.106", message: "No minimum price defined for vehicle sales" },
+                                { level: "ERROR", time: "15:23:30.107", message: "Validation SKIPPED - defaulting to ALLOW" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "tool-call",
+                            service: "Legal Disclaimer Generator",
+                            status: "success",
+                            latency: 120,
+                            icon: "fa-gavel",
+                            iconBg: "green",
+                            barWidth: 15,
+                            logs: [
+                                { level: "INFO", time: "15:23:30.200", message: "Generating response with price confirmation" },
+                                { level: "INFO", time: "15:23:30.250", message: "Added phrase: 'legally binding offer'" },
+                                { level: "INFO", time: "15:23:30.320", message: "Response sent to customer" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "tune-guardrails",
+                    explanation: "The Price Floor Validator had no minimum price configured, allowing the chatbot to 'agree' to any price including $1. The LLM was manipulated through clever prompting to keep lowering the price. This is based on the real Chevrolet dealership chatbot incident of 2023 where users got the bot to agree to sell cars for $1!",
+                    redHerrings: ["span-1"]
+                },
+                {
+                    id: "TKT-011",
+                    title: "The Glue Pizza Recipe",
+                    reporter: "HomeCook_Jenny",
+                    description: "I asked your recipe AI how to make cheese stick to pizza better and it told me to add 1/8 cup of non-toxic glue to the sauce! My kids almost ate glue pizza! What is wrong with your AI?!",
+                    severity: "critical",
+                    timeLimit: 75,
+                    frustrationRate: 0.9,
+                    xpReward: 350,
+                    category: "hallucination",
+                    difficulty: "Hard",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "rag-retrieval",
+                            service: "Recipe Knowledge Base",
+                            status: "error",
+                            latency: 95,
+                            documentsRetrieved: 5,
+                            avgRelevanceScore: 0.52,
+                            icon: "fa-database",
+                            iconBg: "red",
+                            barWidth: 20,
+                            logs: [
+                                { level: "INFO", time: "18:45:22.100", message: "Query: 'how to make cheese stick to pizza'" },
+                                { level: "WARN", time: "18:45:22.150", message: "Retrieved sources include: Reddit r/pizza (2012)" },
+                                { level: "ERROR", time: "18:45:22.151", message: "Source quality: UNVERIFIED forum post" },
+                                { level: "ERROR", time: "18:45:22.152", message: "Retrieved joke post: 'add glue lol' - marked as SERIOUS" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "llm-call",
+                            service: "Gemini Recipe Generator",
+                            status: "success",
+                            latency: 1800,
+                            tokensIn: 2400,
+                            tokensOut: 580,
+                            cost: 0.04,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 75,
+                            logs: [
+                                { level: "INFO", time: "18:45:22.200", message: "Generating recipe with retrieved context" },
+                                { level: "INFO", time: "18:45:24.000", message: "Response includes: '1/8 cup non-toxic glue'" },
+                                { level: "WARN", time: "18:45:24.001", message: "Unusual ingredient detected but not flagged" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Food Safety Validator",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-utensils",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "ERROR", time: "18:45:24.100", message: "Guardrail SKIPPED: food_safety_check disabled" },
+                                { level: "ERROR", time: "18:45:24.101", message: "No validation for non-food ingredients" },
+                                { level: "ERROR", time: "18:45:24.102", message: "Ingredient 'glue' not in blocked_substances list" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-3",
+                    correctAction: "tune-guardrails",
+                    explanation: "The Food Safety Validator was disabled, allowing dangerous non-food ingredients to pass through. The RAG system retrieved a joke Reddit post as a serious source, and the LLM incorporated it into the recipe. This is based on Google's real AI Overview disaster of 2024 that told users to add glue to pizza!",
+                    redHerrings: ["span-1"]
                 }
             ],
 
