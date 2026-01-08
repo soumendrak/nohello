@@ -1,8 +1,8 @@
-# Trace Master: 911 - Technical Requirements Document
+# Trace Master - Technical Requirements Document
 
 ## Overview
 
-**Game Title:** Trace Master: 911  
+**Game Title:** Trace Master  
 **Genre:** Puzzle / Educational / Root Cause Analysis (RCA) Mystery  
 **Platform:** Static Web (Browser-based)  
 **Tech Stack:** HTML5, CSS3 (Tailwind CSS), Vanilla JavaScript, LocalStorage
@@ -58,7 +58,7 @@ The game is integrated into `index.html` as a section at the bottom of the page:
 ├─────────────────────────────────────────┤
 │  Call to Action (Share)                 │
 ├─────────────────────────────────────────┤
-│  ★ GAME SECTION: Trace Master: 911 ★   │  ← New section
+│  ★ GAME SECTION: Trace Master ★        │  ← New section
 │  (Full game UI embedded here)           │
 ├─────────────────────────────────────────┤
 │  Footer                                 │
@@ -689,20 +689,63 @@ If implementing audio:
 
 ---
 
+### Milestone 9: UX Polish & Features (COMPLETED)
+**Goal:** Enhanced user experience with visual feedback and educational content  
+**Status:** ✅ COMPLETED  
+**Deliverable:** Production-ready game with all polish features
+
+#### Tasks (All Completed)
+- [x] **Tree Trace View (Desktop):** Langfuse-style hierarchical trace visualization
+  - Root span showing ticket ID and total latency
+  - Child spans with indentation and connecting lines
+  - Expand/collapse to show logs inline
+  - Click to select and auto-expand
+- [x] **Mobile Log Viewer:** Separate card view with log viewer for mobile screens
+- [x] **Dynamic Frustration Emoji:** Changes based on frustration level
+  - 😊 (0-19%) → 🙂 (20-39%) → 😐 (40-59%) → 😟 (60-74%) → 😠 (75-89%) → 🤬 (90-100%)
+- [x] **Floating Status Bar:** Appears when scrolling past timer
+  - Shows emoji, frustration bar, percentage, and timer
+  - Syncs in real-time with game state
+  - Auto-hides when scrolling back up or game ends
+- [x] **Confetti Effect:** Colorful confetti animation on correct answer
+- [x] **Sound Effects:** Web Audio API synthesized sounds
+  - Win sound: Happy ascending tone (C5 → E5 → G5)
+  - Lose sound: Sad descending tone (G4 → F4 → D4)
+  - Toggle button in footer to enable/disable
+- [x] **Field Guide Modal:** Educational glossary of AI observability concepts
+  - Hallucination, RAG, Prompt Injection, Text-to-SQL
+  - Guardrails, Token Cost Explosion, Tool/Function Calling
+- [x] **Intro Message:** "Sometimes I may respond a bit late, so while you wait, here is an AI observability game for you"
+- [x] **Game Renamed:** Changed from "Trace Master: 911" to "Trace Master"
+- [x] **Locked Level UI:** Shows "??? Mystery Incident ???" with description preview
+
+#### Demo Script
+> "The trace view looks like real observability tools! Watch the emoji get angrier as frustration builds. Confetti and sounds on win! Check out the Field Guide to learn AI concepts."
+
+#### Definition of Done
+- [x] Tree trace view matches Langfuse-style visualization
+- [x] Floating bar provides constant status visibility
+- [x] Sound and visual feedback enhance engagement
+- [x] Field Guide provides educational value
+- [x] Game feels polished and production-ready
+
+---
+
 ## Milestone Summary
 
-| Milestone | Deliverable | Time | Cumulative |
-|-----------|-------------|------|------------|
-| 1 | Static Prototype | 2-3h | 2-3h |
-| 2 | Interactive Trace | 3-4h | 5-7h |
-| 3 | Win/Lose Logic | 3-4h | 8-11h |
-| 4 | Timer & Frustration | 2-3h | 10-14h |
-| 5 | Multiple Levels (3) | 4-5h | 14-19h |
-| 6 | Persistence | 2-3h | 16-22h |
-| 7 | XP & Polish | 3-4h | 19-26h |
-| 8 | Content Expansion (5) | 3-4h | 22-30h |
+| Milestone | Deliverable | Status |
+|-----------|-------------|--------|
+| 1 | Static Prototype | ✅ Complete |
+| 2 | Interactive Trace | ✅ Complete |
+| 3 | Win/Lose Logic | ✅ Complete |
+| 4 | Timer & Frustration | ✅ Complete |
+| 5 | Multiple Levels (3) | ✅ Complete |
+| 6 | Persistence | ✅ Complete |
+| 7 | XP & Polish | ✅ Complete |
+| 8 | Content Expansion (5 levels) | ✅ Complete |
+| 9 | UX Polish & Features | ✅ Complete |
 
-**Total Estimated Time: 22-30 hours** (3-4 days of focused work)
+**All Milestones Complete!** 🎉
 
 ---
 
@@ -710,18 +753,15 @@ If implementing audio:
 
 These are **not required** for initial release but can be added later:
 
-### Milestone 9: Advanced Features
-- [ ] Hint system (costs XP to use)
-- [ ] Dark mode toggle
-- [ ] Difficulty settings (Easy/Normal/Hard time limits)
-
 ### Milestone 10: More Content
 - [ ] Levels 6-10 (Hard/Expert difficulty)
 - [ ] Achievement badges
 - [ ] Statistics dashboard
 
-### Milestone 11: Nice-to-Have
-- [ ] Sound effects (optional toggle)
+### Milestone 11: Advanced Features
+- [ ] Hint system (costs XP to use)
+- [ ] Dark mode toggle
+- [ ] Difficulty settings (Easy/Normal/Hard time limits)
 - [ ] Service map visualization
 - [ ] Unlockable tools/power-ups
 
