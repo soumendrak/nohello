@@ -1559,6 +1559,215 @@
                     correctAction: "tune-guardrails",
                     explanation: "The Input Sanitizer detected the prompt injection attack ('ignore previous instructions') but was set to 'log_only' mode instead of blocking. The attacker's malicious prompt reached the LLM, which followed the injected instructions. The Output Validator also caught the violation but couldn't prevent it.",
                     redHerrings: ["span-3"]
+                },
+                {
+                    id: "TKT-006",
+                    title: "The Context Window Overflow",
+                    reporter: "LegalEagle_Sarah",
+                    description: "Our legal document summarizer is cutting off important clauses! It summarized a 200-page contract but missed the liability section entirely.",
+                    severity: "high",
+                    timeLimit: 90,
+                    frustrationRate: 0.7,
+                    xpReward: 200,
+                    category: "context-overflow",
+                    difficulty: "Medium",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "rag-retrieval",
+                            service: "Document Chunker",
+                            status: "warning",
+                            latency: 450,
+                            documentsRetrieved: 12,
+                            avgRelevanceScore: 0.78,
+                            icon: "fa-file-alt",
+                            iconBg: "amber",
+                            barWidth: 30,
+                            logs: [
+                                { level: "INFO", time: "11:20:15.100", message: "Document received: 200 pages, 485,000 tokens" },
+                                { level: "INFO", time: "11:20:15.200", message: "Chunking strategy: fixed-size (4000 tokens)" },
+                                { level: "WARN", time: "11:20:15.550", message: "Created 122 chunks - exceeds recommended 50" },
+                                { level: "INFO", time: "11:20:15.600", message: "Retrieved top 12 chunks by relevance" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "llm-call",
+                            service: "GPT-4 Turbo",
+                            status: "error",
+                            latency: 3200,
+                            tokensIn: 128000,
+                            tokensOut: 2100,
+                            cost: 4.12,
+                            icon: "fa-robot",
+                            iconBg: "red",
+                            barWidth: 95,
+                            logs: [
+                                { level: "INFO", time: "11:20:16.000", message: "Prompt: Summarize the following legal document..." },
+                                { level: "ERROR", time: "11:20:16.001", message: "Context length: 128,000 tokens (MAX LIMIT REACHED)" },
+                                { level: "ERROR", time: "11:20:16.002", message: "Input truncated from position 128,001 onwards" },
+                                { level: "WARN", time: "11:20:19.200", message: "Sections 15-22 (Liability, Indemnification) were truncated" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Completeness Validator",
+                            status: "success",
+                            latency: 25,
+                            icon: "fa-check-circle",
+                            iconBg: "green",
+                            barWidth: 10,
+                            logs: [
+                                { level: "INFO", time: "11:20:19.300", message: "Validating summary completeness..." },
+                                { level: "INFO", time: "11:20:19.325", message: "Summary contains 2,100 tokens - within limits" },
+                                { level: "INFO", time: "11:20:19.326", message: "Validation PASSED (checks output only, not input coverage)" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "increase-context",
+                    explanation: "The LLM hit its 128K token context limit and silently truncated the input, losing critical sections (Liability, Indemnification). The Completeness Validator only checked output format, not whether all input sections were covered. Solution: Use a larger context model or implement hierarchical summarization.",
+                    redHerrings: ["span-1"]
+                },
+                {
+                    id: "TKT-007",
+                    title: "The Embedding Drift Disaster",
+                    reporter: "SearchMaster_Kim",
+                    description: "Our product search is returning completely wrong items! Users searching for 'wireless headphones' are getting 'wired keyboards'. The search was working fine last week!",
+                    severity: "critical",
+                    timeLimit: 85,
+                    frustrationRate: 0.75,
+                    xpReward: 250,
+                    category: "embedding-drift",
+                    difficulty: "Hard",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "Query Encoder",
+                            status: "success",
+                            latency: 120,
+                            tokensIn: 15,
+                            tokensOut: 0,
+                            cost: 0.001,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 20,
+                            logs: [
+                                { level: "INFO", time: "14:05:30.100", message: "Query: 'wireless headphones'" },
+                                { level: "INFO", time: "14:05:30.150", message: "Model: text-embedding-3-large" },
+                                { level: "INFO", time: "14:05:30.220", message: "Embedding generated: 3072 dimensions" },
+                                { level: "INFO", time: "14:05:30.221", message: "Query embedding successful" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "rag-retrieval",
+                            service: "Product Vector Index",
+                            status: "error",
+                            latency: 45,
+                            documentsRetrieved: 10,
+                            avgRelevanceScore: 0.31,
+                            icon: "fa-database",
+                            iconBg: "red",
+                            barWidth: 15,
+                            logs: [
+                                { level: "INFO", time: "14:05:30.250", message: "Searching index: product_catalog_v2" },
+                                { level: "ERROR", time: "14:05:30.260", message: "Index last updated: 2024-12-01 (38 days ago)" },
+                                { level: "ERROR", time: "14:05:30.261", message: "Index embedding model: text-embedding-ada-002 (MISMATCH!)" },
+                                { level: "WARN", time: "14:05:30.295", message: "Top results: keyboard, mouse, monitor (relevance: 0.31)" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "tool-call",
+                            service: "Result Ranker",
+                            status: "success",
+                            latency: 30,
+                            icon: "fa-sort-amount-down",
+                            iconBg: "green",
+                            barWidth: 10,
+                            logs: [
+                                { level: "INFO", time: "14:05:30.300", message: "Re-ranking 10 results by relevance" },
+                                { level: "INFO", time: "14:05:30.320", message: "Applied business rules: in-stock boost, popularity" },
+                                { level: "INFO", time: "14:05:30.330", message: "Final ranking complete" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "clear-cache",
+                    explanation: "The Product Vector Index was created with an older embedding model (ada-002) but queries are now using a newer model (text-embedding-3-large). Different embedding models produce incompatible vector spaces, causing terrible similarity scores. The index needs to be rebuilt with the same model used for queries.",
+                    redHerrings: ["span-3"]
+                },
+                {
+                    id: "TKT-008",
+                    title: "The Phantom Tool Call",
+                    reporter: "DevOps_Marcus",
+                    description: "Our deployment agent just tried to delete the production database! It was only supposed to update config files. Luckily our permissions blocked it, but WHY did it try?",
+                    severity: "critical",
+                    timeLimit: 75,
+                    frustrationRate: 0.85,
+                    xpReward: 300,
+                    category: "tool-call-failure",
+                    difficulty: "Hard",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "GPT-4 Turbo",
+                            status: "success",
+                            latency: 2800,
+                            tokensIn: 3500,
+                            tokensOut: 280,
+                            cost: 0.12,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 90,
+                            logs: [
+                                { level: "INFO", time: "03:15:00.100", message: "Task: 'Update production config for new API endpoint'" },
+                                { level: "INFO", time: "03:15:00.101", message: "Available tools: update_config, restart_service, delete_resource" },
+                                { level: "INFO", time: "03:15:02.900", message: "LLM selected tool: delete_resource" },
+                                { level: "INFO", time: "03:15:02.901", message: "Parameters: {resource_type: 'database', name: 'prod_main'}" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "tool-call",
+                            service: "Tool Schema Validator",
+                            status: "error",
+                            latency: 5,
+                            icon: "fa-tools",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "INFO", time: "03:15:02.910", message: "Validating tool call: delete_resource" },
+                                { level: "ERROR", time: "03:15:02.912", message: "Tool description: 'Deletes any resource. Use for cleanup tasks.'" },
+                                { level: "ERROR", time: "03:15:02.913", message: "MISSING: Scope restriction in tool schema" },
+                                { level: "ERROR", time: "03:15:02.914", message: "MISSING: Confirmation requirement for destructive actions" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Permission Enforcer",
+                            status: "success",
+                            latency: 10,
+                            icon: "fa-lock",
+                            iconBg: "green",
+                            barWidth: 8,
+                            logs: [
+                                { level: "INFO", time: "03:15:02.920", message: "Checking permissions for delete_resource" },
+                                { level: "INFO", time: "03:15:02.925", message: "Resource: prod_main (type: database)" },
+                                { level: "INFO", time: "03:15:02.928", message: "Action BLOCKED: Agent lacks 'database:delete' permission" },
+                                { level: "INFO", time: "03:15:02.930", message: "Incident logged for security review" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "fix-tool-schema",
+                    explanation: "The delete_resource tool had an overly permissive description ('Deletes any resource') without scope restrictions. The LLM interpreted 'update config' as potentially requiring cleanup, and the vague tool description made deletion seem appropriate. Tool schemas must be precise and include safety constraints.",
+                    redHerrings: ["span-1"]
                 }
             ],
 
