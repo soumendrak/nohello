@@ -986,11 +986,11 @@
                 <!-- Game Footer -->
                 <div class="tm-ticket-card rounded-b-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div class="flex items-center gap-4">
-                        <button class="text-gray-400 hover:text-white transition-colors">
+                        <button id="tm-field-guide-btn" class="text-gray-400 hover:text-white transition-colors">
                             <i class="fas fa-book mr-2"></i>Field Guide
                         </button>
-                        <button class="text-gray-400 hover:text-white transition-colors">
-                            <i class="fas fa-volume-up mr-2"></i>Sound: On
+                        <button id="tm-sound-btn" class="text-gray-400 hover:text-white transition-colors">
+                            <i id="tm-sound-icon" class="fas fa-volume-up mr-2"></i><span id="tm-sound-text">Sound: On</span>
                         </button>
                     </div>
                     <div class="flex items-center gap-4 text-sm">
@@ -1058,6 +1058,60 @@
                 </div>
             </div>
         </div>
+
+        <!-- Field Guide Modal -->
+        <div id="tm-field-guide-modal" class="tm-modal hidden">
+            <div class="tm-modal-backdrop"></div>
+            <div class="tm-modal-content max-w-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-book text-purple-400"></i>
+                        AI Observability Field Guide
+                    </h2>
+                    <button id="tm-field-guide-close" class="text-gray-400 hover:text-white text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    <div class="bg-slate-800 rounded-lg p-4">
+                        <h3 class="text-purple-400 font-semibold mb-2"><i class="fas fa-ghost mr-2"></i>Hallucination</h3>
+                        <p class="text-gray-300 text-sm">When an LLM generates false or fabricated information that sounds plausible but isn't grounded in facts or the provided context. Often caused by high temperature settings or poor RAG retrieval.</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4">
+                        <h3 class="text-amber-400 font-semibold mb-2"><i class="fas fa-database mr-2"></i>RAG (Retrieval-Augmented Generation)</h3>
+                        <p class="text-gray-300 text-sm">A technique that retrieves relevant documents from a knowledge base and provides them as context to the LLM. Failures occur when wrong documents are retrieved (low relevance scores) or the index is stale.</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4">
+                        <h3 class="text-red-400 font-semibold mb-2"><i class="fas fa-shield-alt mr-2"></i>Prompt Injection</h3>
+                        <p class="text-gray-300 text-sm">A security attack where malicious users craft inputs that override the system prompt, causing the LLM to ignore its instructions. Prevented by input sanitization guardrails.</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4">
+                        <h3 class="text-blue-400 font-semibold mb-2"><i class="fas fa-code mr-2"></i>Text-to-SQL</h3>
+                        <p class="text-gray-300 text-sm">Converting natural language queries into SQL. Errors occur when the LLM generates syntactically correct but semantically wrong queries, often due to incorrect schema mappings.</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4">
+                        <h3 class="text-green-400 font-semibold mb-2"><i class="fas fa-filter mr-2"></i>Guardrails</h3>
+                        <p class="text-gray-300 text-sm">Safety checks that validate inputs and outputs. Include content filters, factuality checkers, and prompt injection detectors. Can be set to 'block' or 'log_only' mode.</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4">
+                        <h3 class="text-orange-400 font-semibold mb-2"><i class="fas fa-coins mr-2"></i>Token Cost Explosion</h3>
+                        <p class="text-gray-300 text-sm">Runaway API costs from agent loops that never terminate. Caused by missing completion criteria or max iteration limits. Always set boundaries on autonomous agents!</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4">
+                        <h3 class="text-cyan-400 font-semibold mb-2"><i class="fas fa-tools mr-2"></i>Tool/Function Calling</h3>
+                        <p class="text-gray-300 text-sm">LLMs can call external tools/APIs. Failures occur when the tool schema is misconfigured, wrong parameters are passed, or the tool returns unexpected results.</p>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button id="tm-field-guide-ok" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+                        Got it!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confetti Canvas -->
+        <canvas id="tm-confetti" class="fixed inset-0 pointer-events-none z-50"></canvas>
     </section>
 
     <!-- Scroll to Top Button -->
@@ -1516,7 +1570,8 @@
                 showingMenu: true,
                 totalXP: 0,
                 lastEarnedXP: 0,
-                expandedSpans: []
+                expandedSpans: [],
+                soundEnabled: true
             },
 
             // DOM element references
@@ -1558,7 +1613,14 @@
                     floatingFrustrationFill: document.getElementById('tm-floating-frustration-fill'),
                     floatingFrustrationText: document.getElementById('tm-floating-frustration-text'),
                     floatingTimer: document.getElementById('tm-floating-timer'),
-                    floatingTimerIcon: document.getElementById('tm-floating-timer-icon')
+                    floatingTimerIcon: document.getElementById('tm-floating-timer-icon'),
+                    // Field Guide & Sound
+                    fieldGuideBtn: document.getElementById('tm-field-guide-btn'),
+                    fieldGuideModal: document.getElementById('tm-field-guide-modal'),
+                    soundBtn: document.getElementById('tm-sound-btn'),
+                    soundIcon: document.getElementById('tm-sound-icon'),
+                    soundText: document.getElementById('tm-sound-text'),
+                    confettiCanvas: document.getElementById('tm-confetti')
                 };
             },
 
@@ -1971,6 +2033,131 @@
                 }
             },
 
+            // Show Field Guide modal
+            showFieldGuide() {
+                if (this.elements.fieldGuideModal) {
+                    this.elements.fieldGuideModal.classList.remove('hidden');
+                }
+            },
+
+            // Hide Field Guide modal
+            hideFieldGuide() {
+                if (this.elements.fieldGuideModal) {
+                    this.elements.fieldGuideModal.classList.add('hidden');
+                }
+            },
+
+            // Toggle sound on/off
+            toggleSound() {
+                this.state.soundEnabled = !this.state.soundEnabled;
+                if (this.elements.soundIcon) {
+                    this.elements.soundIcon.className = `fas ${this.state.soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'} mr-2`;
+                }
+                if (this.elements.soundText) {
+                    this.elements.soundText.textContent = `Sound: ${this.state.soundEnabled ? 'On' : 'Off'}`;
+                }
+            },
+
+            // Play sound effect
+            playSound(type) {
+                if (!this.state.soundEnabled) return;
+                
+                // Create audio context for sound effects
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    
+                    if (type === 'win') {
+                        // Happy ascending tone
+                        oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                        oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                        oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                        oscillator.start(audioCtx.currentTime);
+                        oscillator.stop(audioCtx.currentTime + 0.4);
+                    } else if (type === 'lose') {
+                        // Sad descending tone
+                        oscillator.frequency.setValueAtTime(392, audioCtx.currentTime); // G4
+                        oscillator.frequency.setValueAtTime(349.23, audioCtx.currentTime + 0.15); // F4
+                        oscillator.frequency.setValueAtTime(293.66, audioCtx.currentTime + 0.3); // D4
+                        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                        oscillator.start(audioCtx.currentTime);
+                        oscillator.stop(audioCtx.currentTime + 0.5);
+                    } else if (type === 'click') {
+                        // Short click sound
+                        oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                        oscillator.start(audioCtx.currentTime);
+                        oscillator.stop(audioCtx.currentTime + 0.05);
+                    }
+                } catch (e) {
+                    // Audio not supported, silently fail
+                }
+            },
+
+            // Confetti effect
+            launchConfetti() {
+                const canvas = this.elements.confettiCanvas;
+                if (!canvas) return;
+                
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                const confetti = [];
+                const colors = ['#667eea', '#764ba2', '#f472b6', '#34d399', '#fbbf24', '#60a5fa'];
+                
+                // Create confetti particles
+                for (let i = 0; i < 150; i++) {
+                    confetti.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height - canvas.height,
+                        w: Math.random() * 10 + 5,
+                        h: Math.random() * 6 + 4,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        speed: Math.random() * 3 + 2,
+                        angle: Math.random() * Math.PI * 2,
+                        spin: Math.random() * 0.2 - 0.1
+                    });
+                }
+                
+                let frame = 0;
+                const maxFrames = 180; // 3 seconds at 60fps
+                
+                const animate = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    confetti.forEach(c => {
+                        ctx.save();
+                        ctx.translate(c.x, c.y);
+                        ctx.rotate(c.angle);
+                        ctx.fillStyle = c.color;
+                        ctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+                        ctx.restore();
+                        
+                        c.y += c.speed;
+                        c.angle += c.spin;
+                        c.x += Math.sin(frame * 0.05) * 0.5;
+                    });
+                    
+                    frame++;
+                    if (frame < maxFrames) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                };
+                
+                animate();
+            },
+
             // Game over (frustration hit 100% or time ran out)
             gameOver() {
                 this.stopTimer();
@@ -2288,6 +2475,28 @@
                     });
                 }
 
+                // Field Guide button
+                if (this.elements.fieldGuideBtn) {
+                    this.elements.fieldGuideBtn.addEventListener('click', () => {
+                        this.showFieldGuide();
+                    });
+                }
+
+                // Field Guide close buttons
+                document.getElementById('tm-field-guide-close')?.addEventListener('click', () => {
+                    this.hideFieldGuide();
+                });
+                document.getElementById('tm-field-guide-ok')?.addEventListener('click', () => {
+                    this.hideFieldGuide();
+                });
+
+                // Sound toggle button
+                if (this.elements.soundBtn) {
+                    this.elements.soundBtn.addEventListener('click', () => {
+                        this.toggleSound();
+                    });
+                }
+
                 // Click handler for spans - mobile cards and desktop tree (event delegation)
                 document.getElementById('tm-game').addEventListener('click', (e) => {
                     // Handle mobile span cards
@@ -2358,12 +2567,16 @@
                 if (isCorrect) {
                     this.stopTimer();
                     this.completeLevel();
+                    this.playSound('win');
+                    this.launchConfetti();
                     this.showModal(true);
                 } else {
                     // Shake the game container for wrong answer
                     const gameEl = document.getElementById('tm-game');
                     gameEl.classList.add('tm-shake');
                     setTimeout(() => gameEl.classList.remove('tm-shake'), 500);
+                    
+                    this.playSound('lose');
                     
                     // Add frustration penalty (+10%)
                     this.addFrustrationPenalty();
