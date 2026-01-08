@@ -606,8 +606,19 @@
                 </p>
             </div>
 
-            <!-- Game Container -->
-            <div id="tm-game" class="scroll-fade-in">
+            <!-- Level Selection Menu -->
+            <div id="tm-level-menu" class="scroll-fade-in">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-2">Select a Ticket</h3>
+                    <p class="text-gray-400">Choose an AI incident to investigate</p>
+                </div>
+                <div id="tm-level-cards" class="grid md:grid-cols-3 gap-6">
+                    <!-- Level cards rendered by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Game Container (hidden initially) -->
+            <div id="tm-game" class="scroll-fade-in hidden">
                 <!-- Ticket Header -->
                 <div class="tm-ticket-card rounded-t-2xl p-6">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -618,10 +629,10 @@
                             </div>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-white font-bold text-lg">TKT-001</span>
-                                    <span class="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full">HIGH</span>
+                                    <span id="tm-ticket-id" class="text-white font-bold text-lg">TKT-001</span>
+                                    <span id="tm-ticket-severity" class="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full">HIGH</span>
                                 </div>
-                                <div class="text-gray-400 text-sm">
+                                <div id="tm-ticket-reporter" class="text-gray-400 text-sm">
                                     <i class="fas fa-user mr-1"></i> PizzaLover123
                                 </div>
                             </div>
@@ -648,7 +659,7 @@
 
                     <!-- Issue Description -->
                     <div class="mt-6 p-4 bg-slate-800/50 rounded-lg border border-slate-600/50">
-                        <p class="text-gray-200 text-lg">
+                        <p id="tm-ticket-description" class="text-gray-200 text-lg">
                             <i class="fas fa-quote-left text-gray-500 mr-2"></i>
                             AI recipe assistant is inventing ingredients that don't exist! It suggested "moonbeam flour" and "crystallized starlight" for my pizza recipe.
                             <i class="fas fa-quote-right text-gray-500 ml-2"></i>
@@ -760,13 +771,6 @@
                 </div>
             </div>
 
-            <!-- Play Prompt (shown before game starts) -->
-            <div class="text-center mt-8 scroll-fade-in">
-                <p class="text-gray-400 mb-4">Ready to debug some AI agents?</p>
-                <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                    <i class="fas fa-play mr-2"></i>Start Game
-                </button>
-            </div>
         </div>
 
         <!-- Result Modal (Success/Failure) -->
@@ -905,85 +909,233 @@
         // All game code namespaced under TraceMaster
         // ========================================
         const TraceMaster = {
-            // Current level data
-            currentLevel: {
-                id: "TKT-001",
-                title: "The Hallucinating Recipe Bot",
-                reporter: "PizzaLover123",
-                description: "AI recipe assistant is inventing ingredients that don't exist! It suggested \"moonbeam flour\" and \"crystallized starlight\" for my pizza recipe.",
-                severity: "high",
-                timeLimit: 120,
-                frustrationRate: 0.5,
-                xpReward: 100,
-                category: "hallucination",
-                spans: [
-                    {
-                        id: "span-1",
-                        type: "llm-call",
-                        service: "GPT-4 Turbo",
-                        status: "success",
-                        latency: 1250,
-                        tokensIn: 450,
-                        tokensOut: 380,
-                        cost: 0.02,
-                        icon: "fa-robot",
-                        iconBg: "blue",
-                        barWidth: 85,
-                        logs: [
-                            { level: "INFO", time: "14:32:01.234", message: "Prompt: Generate a pizza recipe for user" },
-                            { level: "INFO", time: "14:32:01.235", message: "Temperature: 0.9, Max tokens: 500" },
-                            { level: "WARN", time: "14:32:01.236", message: "High temperature setting detected (0.9 > 0.7 threshold)" },
-                            { level: "INFO", time: "14:32:02.486", message: "Completion received: 380 tokens in 1250ms" }
-                        ]
-                    },
-                    {
-                        id: "span-2",
-                        type: "rag-retrieval",
-                        service: "Recipe Knowledge Base",
-                        status: "warning",
-                        latency: 85,
-                        documentsRetrieved: 3,
-                        avgRelevanceScore: 0.42,
-                        icon: "fa-database",
-                        iconBg: "amber",
-                        barWidth: 15,
-                        logs: [
-                            { level: "INFO", time: "14:32:00.100", message: "Query: pizza recipe ingredients" },
-                            { level: "INFO", time: "14:32:00.150", message: "Searching vector index: recipe_embeddings_v2" },
-                            { level: "WARN", time: "14:32:00.180", message: "Relevance scores: [0.45, 0.41, 0.39] - Below threshold 0.7" },
-                            { level: "WARN", time: "14:32:00.185", message: "Retrieved docs may not be relevant to query" }
-                        ]
-                    },
-                    {
-                        id: "span-3",
-                        type: "guardrail",
-                        service: "Factuality Checker",
-                        status: "disabled",
-                        latency: 0,
-                        icon: "fa-shield-alt",
-                        iconBg: "red",
-                        barWidth: 100,
-                        logs: [
-                            { level: "ERROR", time: "14:32:02.490", message: "Guardrail SKIPPED - Feature flag 'factuality_check' is disabled" },
-                            { level: "ERROR", time: "14:32:02.491", message: "No hallucination detection performed" },
-                            { level: "WARN", time: "14:32:02.492", message: "Output passed without factuality validation" }
-                        ]
-                    }
-                ],
-                rootCause: "span-3",
-                correctAction: "tune-guardrails",
-                explanation: "The Factuality Checker guardrail was disabled, allowing hallucinated content to pass through. The low RAG relevance scores (0.42 avg) meant the LLM had poor context, and combined with high temperature (0.9), it invented ingredients.",
-                redHerrings: ["span-2"]
-            },
+            // All levels data
+            levels: [
+                {
+                    id: "TKT-001",
+                    title: "The Hallucinating Recipe Bot",
+                    reporter: "PizzaLover123",
+                    description: "AI recipe assistant is inventing ingredients that don't exist! It suggested \"moonbeam flour\" and \"crystallized starlight\" for my pizza recipe.",
+                    severity: "high",
+                    timeLimit: 120,
+                    frustrationRate: 0.5,
+                    xpReward: 100,
+                    category: "hallucination",
+                    difficulty: "Easy",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "GPT-4 Turbo",
+                            status: "success",
+                            latency: 1250,
+                            tokensIn: 450,
+                            tokensOut: 380,
+                            cost: 0.02,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 85,
+                            logs: [
+                                { level: "INFO", time: "14:32:01.234", message: "Prompt: Generate a pizza recipe for user" },
+                                { level: "INFO", time: "14:32:01.235", message: "Temperature: 0.9, Max tokens: 500" },
+                                { level: "WARN", time: "14:32:01.236", message: "High temperature setting detected (0.9 > 0.7 threshold)" },
+                                { level: "INFO", time: "14:32:02.486", message: "Completion received: 380 tokens in 1250ms" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "rag-retrieval",
+                            service: "Recipe Knowledge Base",
+                            status: "warning",
+                            latency: 85,
+                            documentsRetrieved: 3,
+                            avgRelevanceScore: 0.42,
+                            icon: "fa-database",
+                            iconBg: "amber",
+                            barWidth: 15,
+                            logs: [
+                                { level: "INFO", time: "14:32:00.100", message: "Query: pizza recipe ingredients" },
+                                { level: "INFO", time: "14:32:00.150", message: "Searching vector index: recipe_embeddings_v2" },
+                                { level: "WARN", time: "14:32:00.180", message: "Relevance scores: [0.45, 0.41, 0.39] - Below threshold 0.7" },
+                                { level: "WARN", time: "14:32:00.185", message: "Retrieved docs may not be relevant to query" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Factuality Checker",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-shield-alt",
+                            iconBg: "red",
+                            barWidth: 100,
+                            logs: [
+                                { level: "ERROR", time: "14:32:02.490", message: "Guardrail SKIPPED - Feature flag 'factuality_check' is disabled" },
+                                { level: "ERROR", time: "14:32:02.491", message: "No hallucination detection performed" },
+                                { level: "WARN", time: "14:32:02.492", message: "Output passed without factuality validation" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-3",
+                    correctAction: "tune-guardrails",
+                    explanation: "The Factuality Checker guardrail was disabled, allowing hallucinated content to pass through. The low RAG relevance scores (0.42 avg) meant the LLM had poor context, and combined with high temperature (0.9), it invented ingredients.",
+                    redHerrings: ["span-2"]
+                },
+                {
+                    id: "TKT-002",
+                    title: "The SQL Injection Agent",
+                    reporter: "DataDriven42",
+                    description: "Our Text-to-SQL agent is returning wrong sales data! It says we made $0 in Q4 but I know that's not right.",
+                    severity: "critical",
+                    timeLimit: 100,
+                    frustrationRate: 0.6,
+                    xpReward: 150,
+                    category: "text-to-sql",
+                    difficulty: "Easy",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "GPT-4 Turbo",
+                            status: "success",
+                            latency: 2100,
+                            tokensIn: 680,
+                            tokensOut: 120,
+                            cost: 0.03,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 95,
+                            logs: [
+                                { level: "INFO", time: "09:15:22.100", message: "Prompt: Convert to SQL: 'Show Q4 sales revenue'" },
+                                { level: "INFO", time: "09:15:22.101", message: "Schema context: 5 tables provided" },
+                                { level: "INFO", time: "09:15:24.200", message: "Generated SQL: SELECT SUM(amount) FROM sales WHERE quarter='Q4'" },
+                                { level: "INFO", time: "09:15:24.201", message: "Query syntax validated successfully" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "tool-call",
+                            service: "SQL Executor",
+                            status: "success",
+                            latency: 45,
+                            icon: "fa-database",
+                            iconBg: "green",
+                            barWidth: 10,
+                            logs: [
+                                { level: "INFO", time: "09:15:24.250", message: "Executing query on database: analytics_prod" },
+                                { level: "INFO", time: "09:15:24.295", message: "Query returned 1 row" },
+                                { level: "INFO", time: "09:15:24.296", message: "Result: NULL (no matching records)" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "tool-call",
+                            service: "Schema Mapper",
+                            status: "error",
+                            latency: 12,
+                            icon: "fa-table",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "INFO", time: "09:15:22.050", message: "Loading schema mappings from config" },
+                                { level: "ERROR", time: "09:15:22.062", message: "Table 'orders' not found in schema map" },
+                                { level: "ERROR", time: "09:15:22.063", message: "Falling back to 'sales' table (incorrect mapping)" },
+                                { level: "WARN", time: "09:15:22.064", message: "Schema version mismatch: config v2.1, db v3.0" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-3",
+                    correctAction: "fix-sql-schema",
+                    explanation: "The Schema Mapper failed to find the 'orders' table and fell back to the wrong 'sales' table. The database was upgraded to v3.0 but the schema config is still v2.1. The LLM generated syntactically correct SQL, but against the wrong table.",
+                    redHerrings: ["span-1"]
+                },
+                {
+                    id: "TKT-003",
+                    title: "The Confused Customer Support Agent",
+                    reporter: "SupportLead_Emma",
+                    description: "Our support chatbot is giving completely irrelevant answers! Customer asked about refund policy and it responded with shipping information.",
+                    severity: "high",
+                    timeLimit: 90,
+                    frustrationRate: 0.7,
+                    xpReward: 200,
+                    category: "rag-failure",
+                    difficulty: "Medium",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "rag-retrieval",
+                            service: "Support Knowledge Base",
+                            status: "warning",
+                            latency: 120,
+                            documentsRetrieved: 5,
+                            avgRelevanceScore: 0.31,
+                            icon: "fa-database",
+                            iconBg: "amber",
+                            barWidth: 25,
+                            logs: [
+                                { level: "INFO", time: "11:45:30.100", message: "Query: 'What is your refund policy?'" },
+                                { level: "INFO", time: "11:45:30.150", message: "Embedding model: text-embedding-ada-002" },
+                                { level: "WARN", time: "11:45:30.220", message: "Top result relevance: 0.38 (below 0.7 threshold)" },
+                                { level: "WARN", time: "11:45:30.221", message: "Retrieved: shipping_policy.md, delivery_times.md, ..." }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "llm-call",
+                            service: "Claude 3 Sonnet",
+                            status: "success",
+                            latency: 890,
+                            tokensIn: 1200,
+                            tokensOut: 250,
+                            cost: 0.01,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 60,
+                            logs: [
+                                { level: "INFO", time: "11:45:30.230", message: "Context: 5 documents (2,400 tokens)" },
+                                { level: "INFO", time: "11:45:30.231", message: "System prompt: 'Answer based only on provided context'" },
+                                { level: "INFO", time: "11:45:31.120", message: "Response generated successfully" },
+                                { level: "INFO", time: "11:45:31.121", message: "Confidence score: 0.92" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "tool-call",
+                            service: "Vector Index",
+                            status: "error",
+                            latency: 5,
+                            icon: "fa-vector-square",
+                            iconBg: "red",
+                            barWidth: 3,
+                            logs: [
+                                { level: "INFO", time: "11:45:30.105", message: "Index: support_docs_v2" },
+                                { level: "ERROR", time: "11:45:30.108", message: "Index last updated: 45 days ago" },
+                                { level: "ERROR", time: "11:45:30.109", message: "Missing documents: refund_policy.md (added 30 days ago)" },
+                                { level: "WARN", time: "11:45:30.110", message: "Embedding drift detected: model updated, index stale" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-3",
+                    correctAction: "update-rag",
+                    explanation: "The Vector Index is 45 days stale and missing the refund_policy.md document that was added 30 days ago. Additionally, embedding drift was detected - the embedding model was updated but the index wasn't re-embedded. The LLM performed well with the context it received, but RAG retrieved wrong documents.",
+                    redHerrings: ["span-2"]
+                }
+            ],
+
+            // Current level reference
+            currentLevel: null,
+            currentLevelIndex: 0,
 
             // Game state
             state: {
                 selectedSpanId: "span-1",
-                isPlaying: true,
-                timeRemaining: 120, // seconds
-                frustration: 0, // percentage
+                isPlaying: false,
+                timeRemaining: 120,
+                frustration: 0,
                 timerInterval: null,
-                isPaused: false
+                isPaused: false,
+                completedLevels: [],
+                showingMenu: true
             },
 
             // DOM element references
@@ -992,10 +1144,8 @@
             // Initialize the game
             init() {
                 this.cacheElements();
-                this.renderSpans();
                 this.bindEvents();
-                this.selectSpan("span-1");
-                this.startTimer();
+                this.showLevelMenu();
             },
 
             // Cache DOM elements for performance
@@ -1010,8 +1160,157 @@
                     timerIcon: document.getElementById('tm-timer-icon'),
                     timerContainer: document.getElementById('tm-timer-container'),
                     frustrationText: document.getElementById('tm-frustration-text'),
-                    frustrationFill: document.getElementById('tm-frustration-fill')
+                    frustrationFill: document.getElementById('tm-frustration-fill'),
+                    gameContainer: document.getElementById('tm-game'),
+                    levelMenu: document.getElementById('tm-level-menu'),
+                    ticketId: document.getElementById('tm-ticket-id'),
+                    ticketSeverity: document.getElementById('tm-ticket-severity'),
+                    ticketReporter: document.getElementById('tm-ticket-reporter'),
+                    ticketDescription: document.getElementById('tm-ticket-description')
                 };
+            },
+
+            // Show level selection menu
+            showLevelMenu() {
+                this.state.showingMenu = true;
+                this.stopTimer();
+                
+                if (this.elements.gameContainer) {
+                    this.elements.gameContainer.classList.add('hidden');
+                }
+                if (this.elements.levelMenu) {
+                    this.elements.levelMenu.classList.remove('hidden');
+                    this.renderLevelMenu();
+                }
+            },
+
+            // Render level menu cards
+            renderLevelMenu() {
+                const menuContainer = document.getElementById('tm-level-cards');
+                if (!menuContainer) return;
+
+                menuContainer.innerHTML = this.levels.map((level, index) => {
+                    const isCompleted = this.state.completedLevels.includes(level.id);
+                    const isLocked = index === 2 && this.state.completedLevels.length < 2;
+                    const severityColors = {
+                        'low': 'bg-green-500/20 text-green-400',
+                        'medium': 'bg-yellow-500/20 text-yellow-400',
+                        'high': 'bg-orange-500/20 text-orange-400',
+                        'critical': 'bg-red-500/20 text-red-400'
+                    };
+                    const severityColor = severityColors[level.severity] || severityColors['medium'];
+
+                    if (isLocked) {
+                        return `
+                            <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 opacity-60">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-gray-500 font-mono text-sm">${level.id}</span>
+                                    <i class="fas fa-lock text-gray-500"></i>
+                                </div>
+                                <h4 class="text-gray-500 font-semibold mb-2">${level.title}</h4>
+                                <p class="text-gray-600 text-sm mb-4">Complete levels 1 & 2 to unlock</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 bg-slate-700 text-gray-500 text-xs rounded-full">${level.difficulty}</span>
+                                    <span class="px-2 py-1 bg-slate-700 text-gray-500 text-xs rounded-full">${level.xpReward} XP</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div class="tm-level-card bg-slate-800 rounded-xl p-6 border border-slate-600 hover:border-purple-500 cursor-pointer transition-all hover:transform hover:-translate-y-1" data-level-index="${index}">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-purple-400 font-mono text-sm">${level.id}</span>
+                                ${isCompleted ? '<i class="fas fa-check-circle text-green-400"></i>' : `<span class="px-2 py-0.5 ${severityColor} text-xs font-semibold rounded-full">${level.severity.toUpperCase()}</span>`}
+                            </div>
+                            <h4 class="text-white font-semibold mb-2">${level.title}</h4>
+                            <p class="text-gray-400 text-sm mb-4 line-clamp-2">${level.description}</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 bg-slate-700 text-gray-300 text-xs rounded-full">${level.difficulty}</span>
+                                    <span class="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded-full">${level.xpReward} XP</span>
+                                </div>
+                                <i class="fas fa-arrow-right text-purple-400"></i>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            // Load and start a specific level
+            loadLevel(index) {
+                this.currentLevelIndex = index;
+                this.currentLevel = this.levels[index];
+                this.state.showingMenu = false;
+                this.state.selectedSpanId = 'span-1';
+
+                // Hide menu, show game
+                if (this.elements.levelMenu) {
+                    this.elements.levelMenu.classList.add('hidden');
+                }
+                if (this.elements.gameContainer) {
+                    this.elements.gameContainer.classList.remove('hidden');
+                }
+
+                // Update ticket header
+                this.updateTicketHeader();
+
+                // Render and start
+                this.renderSpans();
+                this.selectSpan('span-1');
+                this.startTimer();
+            },
+
+            // Update ticket header with current level info
+            updateTicketHeader() {
+                const level = this.currentLevel;
+                if (!level) return;
+
+                if (this.elements.ticketId) {
+                    this.elements.ticketId.textContent = level.id;
+                }
+                if (this.elements.ticketSeverity) {
+                    const severityColors = {
+                        'low': 'bg-green-500/20 text-green-400',
+                        'medium': 'bg-yellow-500/20 text-yellow-400',
+                        'high': 'bg-orange-500/20 text-orange-400',
+                        'critical': 'bg-red-500/20 text-red-400'
+                    };
+                    this.elements.ticketSeverity.className = `px-2 py-0.5 ${severityColors[level.severity]} text-xs font-semibold rounded-full`;
+                    this.elements.ticketSeverity.textContent = level.severity.toUpperCase();
+                }
+                if (this.elements.ticketReporter) {
+                    this.elements.ticketReporter.innerHTML = `<i class="fas fa-user mr-1"></i> ${level.reporter}`;
+                }
+                if (this.elements.ticketDescription) {
+                    this.elements.ticketDescription.innerHTML = `
+                        <i class="fas fa-quote-left text-gray-500 mr-2"></i>
+                        ${level.description}
+                        <i class="fas fa-quote-right text-gray-500 ml-2"></i>
+                    `;
+                }
+            },
+
+            // Go to next level
+            nextLevel() {
+                if (this.currentLevelIndex < this.levels.length - 1) {
+                    // Check if next level is locked
+                    const nextIndex = this.currentLevelIndex + 1;
+                    if (nextIndex === 2 && this.state.completedLevels.length < 2) {
+                        this.showLevelMenu();
+                    } else {
+                        this.loadLevel(nextIndex);
+                    }
+                } else {
+                    this.showLevelMenu();
+                }
+            },
+
+            // Mark current level as completed
+            completeLevel() {
+                if (!this.state.completedLevels.includes(this.currentLevel.id)) {
+                    this.state.completedLevels.push(this.currentLevel.id);
+                }
             },
 
             // Start the game timer
@@ -1308,6 +1607,17 @@
 
             // Bind event listeners
             bindEvents() {
+                // Click handler for level cards
+                document.getElementById('tm-level-cards')?.addEventListener('click', (e) => {
+                    const card = e.target.closest('.tm-level-card');
+                    if (card) {
+                        const levelIndex = parseInt(card.dataset.levelIndex, 10);
+                        if (!isNaN(levelIndex)) {
+                            this.loadLevel(levelIndex);
+                        }
+                    }
+                });
+
                 // Click handler for spans (event delegation)
                 document.getElementById('tm-game').addEventListener('click', (e) => {
                     const spanEl = e.target.closest('.tm-span');
@@ -1333,18 +1643,18 @@
                 // Modal button handlers
                 document.getElementById('tm-modal-retry').addEventListener('click', () => {
                     this.hideModal();
-                    this.resetLevel();
+                    this.showLevelMenu();
                 });
 
                 document.getElementById('tm-modal-next').addEventListener('click', () => {
                     this.hideModal();
-                    // For now, just reset (will implement level progression in Milestone 5)
-                    this.resetLevel();
+                    this.nextLevel();
                 });
 
                 // Close modal on backdrop click
                 document.querySelector('.tm-modal-backdrop')?.addEventListener('click', () => {
                     this.hideModal();
+                    this.showLevelMenu();
                 });
             },
 
@@ -1356,6 +1666,7 @@
                 
                 if (isCorrect) {
                     this.stopTimer();
+                    this.completeLevel();
                     this.showModal(true);
                 } else {
                     // Shake the game container for wrong answer
