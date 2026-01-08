@@ -160,6 +160,107 @@
             transform: translateY(0);
             will-change: auto;
         }
+
+        /* ========================================
+           Trace Master: 911 Game Styles
+           All classes prefixed with tm- to avoid conflicts
+           ======================================== */
+        
+        .tm-game-container {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .tm-ticket-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .tm-frustration-bar {
+            background: linear-gradient(90deg, #10b981 0%, #f59e0b 50%, #ef4444 100%);
+        }
+
+        .tm-frustration-fill {
+            background: rgba(15, 23, 42, 0.8);
+            transition: width 0.3s ease;
+        }
+
+        .tm-span {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .tm-span:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tm-span.tm-selected {
+            box-shadow: 0 0 0 2px #667eea;
+        }
+
+        .tm-span-bar {
+            height: 8px;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tm-span-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .tm-status-success { background-color: #10b981; }
+        .tm-status-warning { background-color: #f59e0b; }
+        .tm-status-error { background-color: #ef4444; }
+        .tm-status-disabled { 
+            background-color: #6b7280; 
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 4px,
+                rgba(255,255,255,0.1) 4px,
+                rgba(255,255,255,0.1) 8px
+            );
+        }
+
+        .tm-log-entry {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .tm-log-info { color: #60a5fa; }
+        .tm-log-warn { color: #fbbf24; }
+        .tm-log-error { color: #f87171; }
+
+        .tm-action-btn {
+            transition: all 0.2s ease;
+        }
+
+        .tm-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .tm-pulse {
+            animation: tm-pulse 2s infinite;
+        }
+
+        @keyframes tm-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Mobile: Vertical card layout for spans */
+        @media (max-width: 767px) {
+            .tm-span-desktop { display: none; }
+            .tm-span-mobile { display: block; }
+        }
+        @media (min-width: 768px) {
+            .tm-span-desktop { display: block; }
+            .tm-span-mobile { display: none; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -428,6 +529,329 @@
             <div id="copyNotification" class="hidden bg-green-500 text-white px-6 py-3 rounded-lg inline-block shadow-lg">
                 <i class="fas fa-check mr-2"></i>
                 Link copied to clipboard!
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         Trace Master: 911 - AI Observability Game
+         ======================================== -->
+    <section id="trace-master" class="tm-game-container py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <!-- Game Header -->
+            <div class="text-center mb-12 scroll-fade-in">
+                <div class="inline-flex items-center gap-3 mb-4">
+                    <i class="fas fa-terminal text-4xl text-purple-400"></i>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white">Trace Master: 911</h2>
+                </div>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    Debug AI agent failures before customers lose patience. Can you find the root cause?
+                </p>
+            </div>
+
+            <!-- Game Container -->
+            <div id="tm-game" class="scroll-fade-in">
+                <!-- Ticket Header -->
+                <div class="tm-ticket-card rounded-t-2xl p-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <!-- Ticket Info -->
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-ticket-alt text-2xl text-red-400"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-white font-bold text-lg">TKT-001</span>
+                                    <span class="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-semibold rounded-full">HIGH</span>
+                                </div>
+                                <div class="text-gray-400 text-sm">
+                                    <i class="fas fa-user mr-1"></i> PizzaLover123
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Frustration Meter -->
+                        <div class="flex-1 max-w-md">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-gray-400 text-sm font-medium">Customer Frustration</span>
+                                <span class="text-yellow-400 font-bold">65%</span>
+                            </div>
+                            <div class="h-3 bg-gray-700 rounded-full overflow-hidden relative">
+                                <div class="tm-frustration-bar h-full w-full absolute"></div>
+                                <div class="tm-frustration-fill h-full absolute right-0" style="width: 35%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Timer -->
+                        <div class="flex items-center gap-2 text-white">
+                            <i class="fas fa-clock text-yellow-400"></i>
+                            <span class="font-mono text-2xl font-bold">1:42</span>
+                        </div>
+                    </div>
+
+                    <!-- Issue Description -->
+                    <div class="mt-6 p-4 bg-slate-800/50 rounded-lg border border-slate-600/50">
+                        <p class="text-gray-200 text-lg">
+                            <i class="fas fa-quote-left text-gray-500 mr-2"></i>
+                            AI recipe assistant is inventing ingredients that don't exist! It suggested "moonbeam flour" and "crystallized starlight" for my pizza recipe.
+                            <i class="fas fa-quote-right text-gray-500 ml-2"></i>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Main Game Area -->
+                <div class="bg-slate-900 p-6 border-x border-slate-700">
+                    <!-- Section: AI Agent Trace -->
+                    <div class="mb-8">
+                        <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-project-diagram text-purple-400"></i>
+                            AI Agent Trace
+                        </h3>
+
+                        <!-- Desktop: Horizontal Waterfall View -->
+                        <div class="tm-span-desktop space-y-3">
+                            <!-- Span 1: LLM Call -->
+                            <div class="tm-span tm-selected bg-slate-800 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-500/20 rounded flex items-center justify-center">
+                                            <i class="fas fa-robot text-blue-400"></i>
+                                        </div>
+                                        <div>
+                                            <span class="text-white font-medium">GPT-4 Turbo</span>
+                                            <span class="text-gray-500 text-sm ml-2">LLM Call</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 text-sm">
+                                        <span class="text-green-400"><i class="fas fa-check-circle mr-1"></i>200</span>
+                                        <span class="text-gray-400">1250ms</span>
+                                        <span class="text-purple-400">450→380 tokens</span>
+                                        <span class="text-yellow-400">$0.02</span>
+                                    </div>
+                                </div>
+                                <div class="tm-span-bar bg-slate-700">
+                                    <div class="tm-span-bar-fill tm-status-success" style="width: 85%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Span 2: RAG Retrieval -->
+                            <div class="tm-span bg-slate-800 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-amber-500/20 rounded flex items-center justify-center">
+                                            <i class="fas fa-database text-amber-400"></i>
+                                        </div>
+                                        <div>
+                                            <span class="text-white font-medium">Recipe Knowledge Base</span>
+                                            <span class="text-gray-500 text-sm ml-2">RAG Retrieval</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 text-sm">
+                                        <span class="text-green-400"><i class="fas fa-check-circle mr-1"></i>200</span>
+                                        <span class="text-gray-400">85ms</span>
+                                        <span class="text-amber-400">3 docs</span>
+                                        <span class="text-amber-400">relevance: 0.42</span>
+                                    </div>
+                                </div>
+                                <div class="tm-span-bar bg-slate-700">
+                                    <div class="tm-span-bar-fill tm-status-warning" style="width: 15%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Span 3: Guardrail (Disabled) -->
+                            <div class="tm-span bg-slate-800 rounded-lg p-4 border border-red-500/30">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-red-500/20 rounded flex items-center justify-center">
+                                            <i class="fas fa-shield-alt text-red-400"></i>
+                                        </div>
+                                        <div>
+                                            <span class="text-white font-medium">Factuality Checker</span>
+                                            <span class="text-gray-500 text-sm ml-2">Guardrail</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 text-sm">
+                                        <span class="text-gray-500"><i class="fas fa-ban mr-1"></i>DISABLED</span>
+                                        <span class="text-gray-500">0ms</span>
+                                    </div>
+                                </div>
+                                <div class="tm-span-bar bg-slate-700">
+                                    <div class="tm-span-bar-fill tm-status-disabled" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile: Vertical Card View -->
+                        <div class="tm-span-mobile space-y-3">
+                            <!-- Span 1: LLM Call -->
+                            <div class="tm-span tm-selected bg-slate-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-robot text-blue-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-medium">GPT-4 Turbo</div>
+                                        <div class="text-gray-500 text-xs">LLM Call</div>
+                                    </div>
+                                    <span class="ml-auto text-green-400 text-sm"><i class="fas fa-check-circle"></i></span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="text-gray-400">Latency: <span class="text-white">1250ms</span></div>
+                                    <div class="text-gray-400">Tokens: <span class="text-purple-400">450→380</span></div>
+                                    <div class="text-gray-400">Cost: <span class="text-yellow-400">$0.02</span></div>
+                                    <div class="text-gray-400">Status: <span class="text-green-400">Success</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Span 2: RAG Retrieval -->
+                            <div class="tm-span bg-slate-800 rounded-lg p-4">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-database text-amber-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-medium">Recipe Knowledge Base</div>
+                                        <div class="text-gray-500 text-xs">RAG Retrieval</div>
+                                    </div>
+                                    <span class="ml-auto text-amber-400 text-sm"><i class="fas fa-exclamation-triangle"></i></span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="text-gray-400">Latency: <span class="text-white">85ms</span></div>
+                                    <div class="text-gray-400">Docs: <span class="text-amber-400">3</span></div>
+                                    <div class="text-gray-400">Relevance: <span class="text-amber-400">0.42</span></div>
+                                    <div class="text-gray-400">Status: <span class="text-amber-400">Warning</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Span 3: Guardrail (Disabled) -->
+                            <div class="tm-span bg-slate-800 rounded-lg p-4 border border-red-500/30">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-red-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-medium">Factuality Checker</div>
+                                        <div class="text-gray-500 text-xs">Guardrail</div>
+                                    </div>
+                                    <span class="ml-auto text-gray-500 text-sm"><i class="fas fa-ban"></i></span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="text-gray-400">Latency: <span class="text-white">0ms</span></div>
+                                    <div class="text-gray-400">Status: <span class="text-red-400">Disabled</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Log Viewer -->
+                    <div class="mb-8">
+                        <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-terminal text-green-400"></i>
+                            Log Viewer
+                            <span class="text-gray-500 text-sm font-normal ml-2">GPT-4 Turbo</span>
+                        </h3>
+                        <div class="bg-slate-950 rounded-lg p-4 border border-slate-700 max-h-48 overflow-y-auto">
+                            <div class="space-y-2">
+                                <div class="tm-log-entry tm-log-info">
+                                    <span class="text-gray-500">[14:32:01.234]</span>
+                                    <span class="text-blue-400 font-semibold"> INFO </span>
+                                    Prompt: Generate a pizza recipe for user
+                                </div>
+                                <div class="tm-log-entry tm-log-info">
+                                    <span class="text-gray-500">[14:32:01.235]</span>
+                                    <span class="text-blue-400 font-semibold"> INFO </span>
+                                    Temperature: 0.9, Max tokens: 500
+                                </div>
+                                <div class="tm-log-entry tm-log-warn">
+                                    <span class="text-gray-500">[14:32:01.236]</span>
+                                    <span class="text-yellow-400 font-semibold"> WARN </span>
+                                    High temperature setting detected (0.9 > 0.7 threshold)
+                                </div>
+                                <div class="tm-log-entry tm-log-info">
+                                    <span class="text-gray-500">[14:32:02.486]</span>
+                                    <span class="text-blue-400 font-semibold"> INFO </span>
+                                    Completion received: 380 tokens in 1250ms
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section: Fix Actions -->
+                    <div>
+                        <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-wrench text-orange-400"></i>
+                            Select Fix Action
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-edit text-2xl text-blue-400 mb-2"></i>
+                                <div class="text-sm font-medium">Adjust Prompt</div>
+                            </button>
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-sync-alt text-2xl text-amber-400 mb-2"></i>
+                                <div class="text-sm font-medium">Update RAG Index</div>
+                            </button>
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-sliders-h text-2xl text-purple-400 mb-2"></i>
+                                <div class="text-sm font-medium">Tune Guardrails</div>
+                            </button>
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-expand-arrows-alt text-2xl text-green-400 mb-2"></i>
+                                <div class="text-sm font-medium">Increase Context</div>
+                            </button>
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-list-ol text-2xl text-cyan-400 mb-2"></i>
+                                <div class="text-sm font-medium">Add Few-Shot</div>
+                            </button>
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-table text-2xl text-pink-400 mb-2"></i>
+                                <div class="text-sm font-medium">Fix SQL Schema</div>
+                            </button>
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-plug text-2xl text-red-400 mb-2"></i>
+                                <div class="text-sm font-medium">Fix Tool Schema</div>
+                            </button>
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                                <i class="fas fa-eraser text-2xl text-gray-400 mb-2"></i>
+                                <div class="text-sm font-medium">Clear Cache</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Footer -->
+                <div class="tm-ticket-card rounded-b-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <button class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fas fa-book mr-2"></i>Field Guide
+                        </button>
+                        <button class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fas fa-volume-up mr-2"></i>Sound: On
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-4 text-sm">
+                        <div class="text-gray-400">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                            <span class="text-white font-bold">0</span> XP
+                        </div>
+                        <div class="text-gray-400">
+                            <i class="fas fa-trophy text-purple-400 mr-1"></i>
+                            Level <span class="text-white font-bold">1</span>
+                        </div>
+                        <div class="text-gray-400">
+                            <i class="fas fa-check-double text-green-400 mr-1"></i>
+                            <span class="text-white font-bold">0</span> Resolved
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Play Prompt (shown before game starts) -->
+            <div class="text-center mt-8 scroll-fade-in">
+                <p class="text-gray-400 mb-4">Ready to debug some AI agents?</p>
+                <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                    <i class="fas fa-play mr-2"></i>Start Game
+                </button>
             </div>
         </div>
     </section>
