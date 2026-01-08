@@ -318,6 +318,49 @@
             60% { transform: translateX(-10px); }
             80% { transform: translateX(10px); }
         }
+
+        /* XP pop animation */
+        .tm-xp-pop {
+            animation: tm-xp-pop 0.6s ease-out;
+        }
+
+        @keyframes tm-xp-pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Span slide-in animation */
+        .tm-span {
+            animation: tm-slide-in 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .tm-span:nth-child(1) { animation-delay: 0.1s; }
+        .tm-span:nth-child(2) { animation-delay: 0.2s; }
+        .tm-span:nth-child(3) { animation-delay: 0.3s; }
+        .tm-span:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes tm-slide-in {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Frustration pulse when > 75% */
+        .tm-frustration-critical {
+            animation: tm-frustration-pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes tm-frustration-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -762,15 +805,11 @@
                     <div class="flex items-center gap-4 text-sm">
                         <div class="text-gray-400">
                             <i class="fas fa-star text-yellow-400 mr-1"></i>
-                            <span class="text-white font-bold">0</span> XP
-                        </div>
-                        <div class="text-gray-400">
-                            <i class="fas fa-trophy text-purple-400 mr-1"></i>
-                            Level <span class="text-white font-bold">1</span>
+                            <span id="tm-total-xp" class="text-white font-bold">0</span> XP
                         </div>
                         <div class="text-gray-400">
                             <i class="fas fa-check-double text-green-400 mr-1"></i>
-                            <span class="text-white font-bold">0</span> Resolved
+                            <span id="tm-resolved-count" class="text-white font-bold">0</span> Resolved
                         </div>
                     </div>
                 </div>
@@ -790,6 +829,10 @@
                         </div>
                         <h3 class="text-2xl font-bold text-white mb-2">Ticket Resolved!</h3>
                         <p class="text-gray-400">You found the root cause!</p>
+                        <div id="tm-xp-earned" class="mt-4 inline-flex items-center gap-2 bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-full font-bold tm-xp-pop">
+                            <i class="fas fa-star"></i>
+                            <span>+<span id="tm-xp-amount">0</span> XP</span>
+                        </div>
                     </div>
                 </div>
 
@@ -1140,7 +1183,9 @@
                 timerInterval: null,
                 isPaused: false,
                 completedLevels: [],
-                showingMenu: true
+                showingMenu: true,
+                totalXP: 0,
+                lastEarnedXP: 0
             },
 
             // DOM element references
@@ -1188,6 +1233,7 @@
                     this.elements.levelMenu.classList.remove('hidden');
                     this.renderLevelMenu();
                 }
+                this.updateXPDisplay();
             },
 
             // Render level menu cards
@@ -1312,11 +1358,38 @@
                 }
             },
 
-            // Mark current level as completed
+            // Mark current level as completed and award XP
             completeLevel() {
-                if (!this.state.completedLevels.includes(this.currentLevel.id)) {
+                const isFirstCompletion = !this.state.completedLevels.includes(this.currentLevel.id);
+                
+                if (isFirstCompletion) {
                     this.state.completedLevels.push(this.currentLevel.id);
-                    this.savePlayerData();
+                }
+                
+                // Calculate XP based on time remaining (bonus for speed)
+                const baseXP = this.currentLevel.xpReward;
+                const timeBonus = Math.floor((this.state.timeRemaining / this.currentLevel.timeLimit) * 50);
+                const frustrationPenalty = Math.floor(this.state.frustration * 0.5);
+                
+                // First completion gets full XP, replays get 25%
+                const multiplier = isFirstCompletion ? 1 : 0.25;
+                this.state.lastEarnedXP = Math.floor((baseXP + timeBonus - frustrationPenalty) * multiplier);
+                this.state.lastEarnedXP = Math.max(10, this.state.lastEarnedXP); // Minimum 10 XP
+                
+                this.state.totalXP += this.state.lastEarnedXP;
+                this.savePlayerData();
+                this.updateXPDisplay();
+            },
+
+            // Update XP display in footer
+            updateXPDisplay() {
+                const xpEl = document.getElementById('tm-total-xp');
+                if (xpEl) {
+                    xpEl.textContent = this.state.totalXP;
+                }
+                const resolvedEl = document.getElementById('tm-resolved-count');
+                if (resolvedEl) {
+                    resolvedEl.textContent = this.state.completedLevels.length;
                 }
             },
 
@@ -1327,6 +1400,7 @@
             savePlayerData() {
                 const data = {
                     completedLevels: this.state.completedLevels,
+                    totalXP: this.state.totalXP,
                     lastPlayed: new Date().toISOString()
                 };
                 try {
@@ -1345,6 +1419,9 @@
                         if (parsed.completedLevels && Array.isArray(parsed.completedLevels)) {
                             this.state.completedLevels = parsed.completedLevels;
                         }
+                        if (typeof parsed.totalXP === 'number') {
+                            this.state.totalXP = parsed.totalXP;
+                        }
                         return parsed;
                     }
                 } catch (e) {
@@ -1356,6 +1433,7 @@
             // Reset all progress
             resetProgress() {
                 this.state.completedLevels = [];
+                this.state.totalXP = 0;
                 try {
                     localStorage.removeItem(this.STORAGE_KEY);
                 } catch (e) {
@@ -1363,6 +1441,7 @@
                 }
                 // Re-render level menu to show cleared checkmarks
                 this.renderLevelMenu();
+                this.updateXPDisplay();
                 
                 // Flash the reset button to show it worked
                 const resetBtn = document.getElementById('tm-reset-progress');
@@ -1458,12 +1537,15 @@
                 let colorClass;
                 if (frustration < 40) {
                     colorClass = 'text-green-400';
-                } else if (frustration < 70) {
+                    this.elements.frustrationText.classList.remove('tm-frustration-critical');
+                } else if (frustration < 75) {
                     colorClass = 'text-yellow-400';
+                    this.elements.frustrationText.classList.remove('tm-frustration-critical');
                 } else {
                     colorClass = 'text-red-400';
+                    this.elements.frustrationText.classList.add('tm-frustration-critical');
                 }
-                this.elements.frustrationText.className = `${colorClass} font-bold`;
+                this.elements.frustrationText.className = `${colorClass} font-bold${frustration >= 75 ? ' tm-frustration-critical' : ''}`;
             },
 
             // Pause the timer
@@ -1770,6 +1852,14 @@
                 // Show/hide success/failure states
                 successEl.classList.toggle('hidden', !isSuccess);
                 failureEl.classList.toggle('hidden', isSuccess);
+
+                // Update XP display on success
+                if (isSuccess) {
+                    const xpAmountEl = document.getElementById('tm-xp-amount');
+                    if (xpAmountEl) {
+                        xpAmountEl.textContent = this.state.lastEarnedXP;
+                    }
+                }
 
                 // Update failure message based on timeout vs wrong answer
                 if (!isSuccess && failureTitle && failureSubtitle) {
