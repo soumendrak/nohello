@@ -608,170 +608,27 @@
                             AI Agent Trace
                         </h3>
 
-                        <!-- Desktop: Horizontal Waterfall View -->
-                        <div class="tm-span-desktop space-y-3">
-                            <!-- Span 1: LLM Call -->
-                            <div class="tm-span tm-selected bg-slate-800 rounded-lg p-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 bg-blue-500/20 rounded flex items-center justify-center">
-                                            <i class="fas fa-robot text-blue-400"></i>
-                                        </div>
-                                        <div>
-                                            <span class="text-white font-medium">GPT-4 Turbo</span>
-                                            <span class="text-gray-500 text-sm ml-2">LLM Call</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-4 text-sm">
-                                        <span class="text-green-400"><i class="fas fa-check-circle mr-1"></i>200</span>
-                                        <span class="text-gray-400">1250ms</span>
-                                        <span class="text-purple-400">450→380 tokens</span>
-                                        <span class="text-yellow-400">$0.02</span>
-                                    </div>
-                                </div>
-                                <div class="tm-span-bar bg-slate-700">
-                                    <div class="tm-span-bar-fill tm-status-success" style="width: 85%;"></div>
-                                </div>
-                            </div>
-
-                            <!-- Span 2: RAG Retrieval -->
-                            <div class="tm-span bg-slate-800 rounded-lg p-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 bg-amber-500/20 rounded flex items-center justify-center">
-                                            <i class="fas fa-database text-amber-400"></i>
-                                        </div>
-                                        <div>
-                                            <span class="text-white font-medium">Recipe Knowledge Base</span>
-                                            <span class="text-gray-500 text-sm ml-2">RAG Retrieval</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-4 text-sm">
-                                        <span class="text-green-400"><i class="fas fa-check-circle mr-1"></i>200</span>
-                                        <span class="text-gray-400">85ms</span>
-                                        <span class="text-amber-400">3 docs</span>
-                                        <span class="text-amber-400">relevance: 0.42</span>
-                                    </div>
-                                </div>
-                                <div class="tm-span-bar bg-slate-700">
-                                    <div class="tm-span-bar-fill tm-status-warning" style="width: 15%;"></div>
-                                </div>
-                            </div>
-
-                            <!-- Span 3: Guardrail (Disabled) -->
-                            <div class="tm-span bg-slate-800 rounded-lg p-4 border border-red-500/30">
-                                <div class="flex items-center justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 bg-red-500/20 rounded flex items-center justify-center">
-                                            <i class="fas fa-shield-alt text-red-400"></i>
-                                        </div>
-                                        <div>
-                                            <span class="text-white font-medium">Factuality Checker</span>
-                                            <span class="text-gray-500 text-sm ml-2">Guardrail</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-4 text-sm">
-                                        <span class="text-gray-500"><i class="fas fa-ban mr-1"></i>DISABLED</span>
-                                        <span class="text-gray-500">0ms</span>
-                                    </div>
-                                </div>
-                                <div class="tm-span-bar bg-slate-700">
-                                    <div class="tm-span-bar-fill tm-status-disabled" style="width: 100%;"></div>
-                                </div>
-                            </div>
+                        <!-- Desktop: Horizontal Waterfall View (dynamically rendered) -->
+                        <div id="tm-spans-desktop" class="tm-span-desktop space-y-3">
+                            <!-- Spans rendered by JavaScript -->
                         </div>
 
-                        <!-- Mobile: Vertical Card View -->
-                        <div class="tm-span-mobile space-y-3">
-                            <!-- Span 1: LLM Call -->
-                            <div class="tm-span tm-selected bg-slate-800 rounded-lg p-4">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-robot text-blue-400 text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-white font-medium">GPT-4 Turbo</div>
-                                        <div class="text-gray-500 text-xs">LLM Call</div>
-                                    </div>
-                                    <span class="ml-auto text-green-400 text-sm"><i class="fas fa-check-circle"></i></span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2 text-sm">
-                                    <div class="text-gray-400">Latency: <span class="text-white">1250ms</span></div>
-                                    <div class="text-gray-400">Tokens: <span class="text-purple-400">450→380</span></div>
-                                    <div class="text-gray-400">Cost: <span class="text-yellow-400">$0.02</span></div>
-                                    <div class="text-gray-400">Status: <span class="text-green-400">Success</span></div>
-                                </div>
-                            </div>
-
-                            <!-- Span 2: RAG Retrieval -->
-                            <div class="tm-span bg-slate-800 rounded-lg p-4">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-database text-amber-400 text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-white font-medium">Recipe Knowledge Base</div>
-                                        <div class="text-gray-500 text-xs">RAG Retrieval</div>
-                                    </div>
-                                    <span class="ml-auto text-amber-400 text-sm"><i class="fas fa-exclamation-triangle"></i></span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2 text-sm">
-                                    <div class="text-gray-400">Latency: <span class="text-white">85ms</span></div>
-                                    <div class="text-gray-400">Docs: <span class="text-amber-400">3</span></div>
-                                    <div class="text-gray-400">Relevance: <span class="text-amber-400">0.42</span></div>
-                                    <div class="text-gray-400">Status: <span class="text-amber-400">Warning</span></div>
-                                </div>
-                            </div>
-
-                            <!-- Span 3: Guardrail (Disabled) -->
-                            <div class="tm-span bg-slate-800 rounded-lg p-4 border border-red-500/30">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-shield-alt text-red-400 text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-white font-medium">Factuality Checker</div>
-                                        <div class="text-gray-500 text-xs">Guardrail</div>
-                                    </div>
-                                    <span class="ml-auto text-gray-500 text-sm"><i class="fas fa-ban"></i></span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2 text-sm">
-                                    <div class="text-gray-400">Latency: <span class="text-white">0ms</span></div>
-                                    <div class="text-gray-400">Status: <span class="text-red-400">Disabled</span></div>
-                                </div>
-                            </div>
+                        <!-- Mobile: Vertical Card View (dynamically rendered) -->
+                        <div id="tm-spans-mobile" class="tm-span-mobile space-y-3">
+                            <!-- Spans rendered by JavaScript -->
                         </div>
                     </div>
 
                     <!-- Section: Log Viewer -->
-                    <div class="mb-8">
+                    <div id="tm-log-viewer" class="mb-8">
                         <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
                             <i class="fas fa-terminal text-green-400"></i>
                             Log Viewer
-                            <span class="text-gray-500 text-sm font-normal ml-2">GPT-4 Turbo</span>
+                            <span id="tm-log-title" class="text-gray-500 text-sm font-normal ml-2">Select a span</span>
                         </h3>
                         <div class="bg-slate-950 rounded-lg p-4 border border-slate-700 max-h-48 overflow-y-auto">
-                            <div class="space-y-2">
-                                <div class="tm-log-entry tm-log-info">
-                                    <span class="text-gray-500">[14:32:01.234]</span>
-                                    <span class="text-blue-400 font-semibold"> INFO </span>
-                                    Prompt: Generate a pizza recipe for user
-                                </div>
-                                <div class="tm-log-entry tm-log-info">
-                                    <span class="text-gray-500">[14:32:01.235]</span>
-                                    <span class="text-blue-400 font-semibold"> INFO </span>
-                                    Temperature: 0.9, Max tokens: 500
-                                </div>
-                                <div class="tm-log-entry tm-log-warn">
-                                    <span class="text-gray-500">[14:32:01.236]</span>
-                                    <span class="text-yellow-400 font-semibold"> WARN </span>
-                                    High temperature setting detected (0.9 > 0.7 threshold)
-                                </div>
-                                <div class="tm-log-entry tm-log-info">
-                                    <span class="text-gray-500">[14:32:02.486]</span>
-                                    <span class="text-blue-400 font-semibold"> INFO </span>
-                                    Completion received: 380 tokens in 1250ms
-                                </div>
+                            <div id="tm-log-content" class="space-y-2">
+                                <!-- Logs rendered by JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -938,6 +795,357 @@
         scrollToTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+
+        // ========================================
+        // Trace Master: 911 - Game Logic
+        // All game code namespaced under TraceMaster
+        // ========================================
+        const TraceMaster = {
+            // Current level data
+            currentLevel: {
+                id: "TKT-001",
+                title: "The Hallucinating Recipe Bot",
+                reporter: "PizzaLover123",
+                description: "AI recipe assistant is inventing ingredients that don't exist! It suggested \"moonbeam flour\" and \"crystallized starlight\" for my pizza recipe.",
+                severity: "high",
+                timeLimit: 120,
+                frustrationRate: 0.5,
+                xpReward: 100,
+                category: "hallucination",
+                spans: [
+                    {
+                        id: "span-1",
+                        type: "llm-call",
+                        service: "GPT-4 Turbo",
+                        status: "success",
+                        latency: 1250,
+                        tokensIn: 450,
+                        tokensOut: 380,
+                        cost: 0.02,
+                        icon: "fa-robot",
+                        iconBg: "blue",
+                        barWidth: 85,
+                        logs: [
+                            { level: "INFO", time: "14:32:01.234", message: "Prompt: Generate a pizza recipe for user" },
+                            { level: "INFO", time: "14:32:01.235", message: "Temperature: 0.9, Max tokens: 500" },
+                            { level: "WARN", time: "14:32:01.236", message: "High temperature setting detected (0.9 > 0.7 threshold)" },
+                            { level: "INFO", time: "14:32:02.486", message: "Completion received: 380 tokens in 1250ms" }
+                        ]
+                    },
+                    {
+                        id: "span-2",
+                        type: "rag-retrieval",
+                        service: "Recipe Knowledge Base",
+                        status: "warning",
+                        latency: 85,
+                        documentsRetrieved: 3,
+                        avgRelevanceScore: 0.42,
+                        icon: "fa-database",
+                        iconBg: "amber",
+                        barWidth: 15,
+                        logs: [
+                            { level: "INFO", time: "14:32:00.100", message: "Query: pizza recipe ingredients" },
+                            { level: "INFO", time: "14:32:00.150", message: "Searching vector index: recipe_embeddings_v2" },
+                            { level: "WARN", time: "14:32:00.180", message: "Relevance scores: [0.45, 0.41, 0.39] - Below threshold 0.7" },
+                            { level: "WARN", time: "14:32:00.185", message: "Retrieved docs may not be relevant to query" }
+                        ]
+                    },
+                    {
+                        id: "span-3",
+                        type: "guardrail",
+                        service: "Factuality Checker",
+                        status: "disabled",
+                        latency: 0,
+                        icon: "fa-shield-alt",
+                        iconBg: "red",
+                        barWidth: 100,
+                        logs: [
+                            { level: "ERROR", time: "14:32:02.490", message: "Guardrail SKIPPED - Feature flag 'factuality_check' is disabled" },
+                            { level: "ERROR", time: "14:32:02.491", message: "No hallucination detection performed" },
+                            { level: "WARN", time: "14:32:02.492", message: "Output passed without factuality validation" }
+                        ]
+                    }
+                ],
+                rootCause: "span-3",
+                correctAction: "tune-guardrails",
+                explanation: "The Factuality Checker guardrail was disabled, allowing hallucinated content to pass through. The low RAG relevance scores (0.42 avg) meant the LLM had poor context, and combined with high temperature (0.9), it invented ingredients.",
+                redHerrings: ["span-2"]
+            },
+
+            // Game state
+            state: {
+                selectedSpanId: "span-1",
+                isPlaying: false
+            },
+
+            // DOM element references
+            elements: {},
+
+            // Initialize the game
+            init() {
+                this.cacheElements();
+                this.renderSpans();
+                this.bindEvents();
+                this.selectSpan("span-1");
+            },
+
+            // Cache DOM elements for performance
+            cacheElements() {
+                this.elements = {
+                    spansDesktop: document.getElementById('tm-spans-desktop'),
+                    spansMobile: document.getElementById('tm-spans-mobile'),
+                    logViewer: document.getElementById('tm-log-viewer'),
+                    logTitle: document.getElementById('tm-log-title'),
+                    logContent: document.getElementById('tm-log-content')
+                };
+            },
+
+            // Render spans from data
+            renderSpans() {
+                const level = this.currentLevel;
+                
+                // Desktop view
+                if (this.elements.spansDesktop) {
+                    this.elements.spansDesktop.innerHTML = level.spans.map(span => this.renderSpanDesktop(span)).join('');
+                }
+                
+                // Mobile view
+                if (this.elements.spansMobile) {
+                    this.elements.spansMobile.innerHTML = level.spans.map(span => this.renderSpanMobile(span)).join('');
+                }
+            },
+
+            // Render a single span (desktop view)
+            renderSpanDesktop(span) {
+                const statusClass = this.getStatusClass(span.status);
+                const statusIcon = this.getStatusIcon(span.status);
+                const statusText = this.getStatusText(span.status);
+                const metrics = this.getSpanMetrics(span);
+                const borderClass = span.status === 'disabled' || span.status === 'error' ? 'border border-red-500/30' : '';
+                
+                return `
+                    <div class="tm-span bg-slate-800 rounded-lg p-4 ${borderClass}" data-span-id="${span.id}">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-${span.iconBg}-500/20 rounded flex items-center justify-center">
+                                    <i class="fas ${span.icon} text-${span.iconBg}-400"></i>
+                                </div>
+                                <div>
+                                    <span class="text-white font-medium">${span.service}</span>
+                                    <span class="text-gray-500 text-sm ml-2">${this.formatSpanType(span.type)}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <span class="${statusIcon.color}"><i class="fas ${statusIcon.icon} mr-1"></i>${statusText}</span>
+                                <span class="text-gray-400">${span.latency}ms</span>
+                                ${metrics}
+                            </div>
+                        </div>
+                        <div class="tm-span-bar bg-slate-700">
+                            <div class="tm-span-bar-fill ${statusClass}" style="width: ${span.barWidth}%;"></div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Render a single span (mobile view)
+            renderSpanMobile(span) {
+                const statusIcon = this.getStatusIcon(span.status);
+                const borderClass = span.status === 'disabled' || span.status === 'error' ? 'border border-red-500/30' : '';
+                const mobileMetrics = this.getMobileMetrics(span);
+                
+                return `
+                    <div class="tm-span bg-slate-800 rounded-lg p-4 ${borderClass}" data-span-id="${span.id}">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-${span.iconBg}-500/20 rounded-lg flex items-center justify-center">
+                                <i class="fas ${span.icon} text-${span.iconBg}-400 text-lg"></i>
+                            </div>
+                            <div>
+                                <div class="text-white font-medium">${span.service}</div>
+                                <div class="text-gray-500 text-xs">${this.formatSpanType(span.type)}</div>
+                            </div>
+                            <span class="ml-auto ${statusIcon.color} text-sm"><i class="fas ${statusIcon.icon}"></i></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            ${mobileMetrics}
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Get span metrics HTML for desktop
+            getSpanMetrics(span) {
+                let metrics = '';
+                if (span.tokensIn && span.tokensOut) {
+                    metrics += `<span class="text-purple-400">${span.tokensIn}→${span.tokensOut} tokens</span>`;
+                }
+                if (span.cost) {
+                    metrics += `<span class="text-yellow-400">$${span.cost.toFixed(2)}</span>`;
+                }
+                if (span.documentsRetrieved) {
+                    metrics += `<span class="text-amber-400">${span.documentsRetrieved} docs</span>`;
+                }
+                if (span.avgRelevanceScore) {
+                    metrics += `<span class="text-amber-400">relevance: ${span.avgRelevanceScore}</span>`;
+                }
+                return metrics;
+            },
+
+            // Get mobile metrics HTML
+            getMobileMetrics(span) {
+                let metrics = `<div class="text-gray-400">Latency: <span class="text-white">${span.latency}ms</span></div>`;
+                
+                if (span.tokensIn && span.tokensOut) {
+                    metrics += `<div class="text-gray-400">Tokens: <span class="text-purple-400">${span.tokensIn}→${span.tokensOut}</span></div>`;
+                }
+                if (span.cost) {
+                    metrics += `<div class="text-gray-400">Cost: <span class="text-yellow-400">$${span.cost.toFixed(2)}</span></div>`;
+                }
+                if (span.documentsRetrieved) {
+                    metrics += `<div class="text-gray-400">Docs: <span class="text-amber-400">${span.documentsRetrieved}</span></div>`;
+                }
+                if (span.avgRelevanceScore) {
+                    metrics += `<div class="text-gray-400">Relevance: <span class="text-amber-400">${span.avgRelevanceScore}</span></div>`;
+                }
+                
+                const statusColor = this.getStatusColor(span.status);
+                const statusLabel = span.status.charAt(0).toUpperCase() + span.status.slice(1);
+                metrics += `<div class="text-gray-400">Status: <span class="${statusColor}">${statusLabel}</span></div>`;
+                
+                return metrics;
+            },
+
+            // Get CSS class for status bar
+            getStatusClass(status) {
+                const classes = {
+                    'success': 'tm-status-success',
+                    'warning': 'tm-status-warning',
+                    'error': 'tm-status-error',
+                    'disabled': 'tm-status-disabled'
+                };
+                return classes[status] || 'tm-status-success';
+            },
+
+            // Get status icon and color
+            getStatusIcon(status) {
+                const icons = {
+                    'success': { icon: 'fa-check-circle', color: 'text-green-400' },
+                    'warning': { icon: 'fa-exclamation-triangle', color: 'text-amber-400' },
+                    'error': { icon: 'fa-times-circle', color: 'text-red-400' },
+                    'disabled': { icon: 'fa-ban', color: 'text-gray-500' }
+                };
+                return icons[status] || icons['success'];
+            },
+
+            // Get status text
+            getStatusText(status) {
+                const texts = {
+                    'success': '200',
+                    'warning': '200',
+                    'error': '500',
+                    'disabled': 'DISABLED'
+                };
+                return texts[status] || '200';
+            },
+
+            // Get status color for mobile
+            getStatusColor(status) {
+                const colors = {
+                    'success': 'text-green-400',
+                    'warning': 'text-amber-400',
+                    'error': 'text-red-400',
+                    'disabled': 'text-red-400'
+                };
+                return colors[status] || 'text-green-400';
+            },
+
+            // Format span type for display
+            formatSpanType(type) {
+                const types = {
+                    'llm-call': 'LLM Call',
+                    'rag-retrieval': 'RAG Retrieval',
+                    'guardrail': 'Guardrail',
+                    'tool-call': 'Tool Call',
+                    'agent-step': 'Agent Step'
+                };
+                return types[type] || type;
+            },
+
+            // Bind event listeners
+            bindEvents() {
+                // Click handler for spans (event delegation)
+                document.getElementById('tm-game').addEventListener('click', (e) => {
+                    const spanEl = e.target.closest('.tm-span');
+                    if (spanEl) {
+                        const spanId = spanEl.dataset.spanId;
+                        if (spanId) {
+                            this.selectSpan(spanId);
+                        }
+                    }
+                });
+            },
+
+            // Select a span and show its logs
+            selectSpan(spanId) {
+                this.state.selectedSpanId = spanId;
+                
+                // Update visual selection
+                document.querySelectorAll('.tm-span').forEach(el => {
+                    el.classList.toggle('tm-selected', el.dataset.spanId === spanId);
+                });
+                
+                // Find span data
+                const span = this.currentLevel.spans.find(s => s.id === spanId);
+                if (!span) return;
+                
+                // Update log viewer title
+                if (this.elements.logTitle) {
+                    this.elements.logTitle.textContent = span.service;
+                }
+                
+                // Update log content
+                if (this.elements.logContent) {
+                    this.elements.logContent.innerHTML = span.logs.map(log => {
+                        const levelClass = this.getLogLevelClass(log.level);
+                        const levelColor = this.getLogLevelColor(log.level);
+                        return `
+                            <div class="tm-log-entry ${levelClass}">
+                                <span class="text-gray-500">[${log.time}]</span>
+                                <span class="${levelColor} font-semibold"> ${log.level} </span>
+                                ${log.message}
+                            </div>
+                        `;
+                    }).join('');
+                }
+            },
+
+            // Get log level CSS class
+            getLogLevelClass(level) {
+                const classes = {
+                    'INFO': 'tm-log-info',
+                    'WARN': 'tm-log-warn',
+                    'ERROR': 'tm-log-error'
+                };
+                return classes[level] || 'tm-log-info';
+            },
+
+            // Get log level color
+            getLogLevelColor(level) {
+                const colors = {
+                    'INFO': 'text-blue-400',
+                    'WARN': 'text-yellow-400',
+                    'ERROR': 'text-red-400'
+                };
+                return colors[level] || 'text-blue-400';
+            }
+        };
+
+        // Initialize game when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => TraceMaster.init());
+        } else {
+            TraceMaster.init();
+        }
     </script>
 </body>
 </html>
