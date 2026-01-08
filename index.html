@@ -361,10 +361,196 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
         }
+
+        /* Tree trace styles */
+        .tm-trace-tree {
+            font-family: 'Inter', monospace;
+        }
+
+        .tm-trace-item {
+            position: relative;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .tm-trace-item:hover {
+            background: rgba(100, 116, 139, 0.1);
+        }
+
+        .tm-trace-item.tm-selected {
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .tm-trace-row {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+        }
+
+        .tm-trace-indent {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .tm-trace-line {
+            width: 1px;
+            height: 100%;
+            background: #475569;
+            margin-right: 0.75rem;
+        }
+
+        .tm-trace-connector {
+            width: 20px;
+            height: 20px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .tm-trace-connector::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 50%;
+            width: 1px;
+            background: #475569;
+        }
+
+        .tm-trace-connector::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 12px;
+            height: 1px;
+            background: #475569;
+        }
+
+        .tm-trace-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-right: 0.5rem;
+        }
+
+        .tm-trace-name {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tm-trace-metrics {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .tm-trace-expand {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .tm-trace-expand:hover {
+            color: #94a3b8;
+        }
+
+        /* Expanded logs section */
+        .tm-trace-logs {
+            margin-left: 44px;
+            padding: 0.75rem;
+            background: #0f172a;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Floating status bar */
+        .tm-floating-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border-bottom: 1px solid #4c1d95;
+            padding: 0.5rem 1rem;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .tm-floating-bar.tm-visible {
+            transform: translateY(0);
+        }
+
+        .tm-floating-bar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .tm-floating-frustration {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .tm-floating-frustration-bar {
+            flex: 1;
+            max-width: 200px;
+            height: 8px;
+            background: #374151;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tm-floating-frustration-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #eab308 50%, #ef4444 100%);
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
     
+    <!-- Floating Status Bar (appears when scrolled past timer) -->
+    <div id="tm-floating-bar" class="tm-floating-bar hidden">
+        <div class="tm-floating-bar-content">
+            <div class="tm-floating-frustration">
+                <span id="tm-floating-emoji" class="text-xl">😊</span>
+                <div class="tm-floating-frustration-bar">
+                    <div id="tm-floating-frustration-fill" class="tm-floating-frustration-fill" style="width: 0%;"></div>
+                </div>
+                <span id="tm-floating-frustration-text" class="text-white font-bold text-sm">0%</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i id="tm-floating-timer-icon" class="fas fa-clock text-green-400"></i>
+                <span id="tm-floating-timer" class="text-white font-mono text-xl font-bold">2:00</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section class="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-purple-50 via-white to-blue-50">
         <div class="max-w-4xl mx-auto text-center">
@@ -689,7 +875,10 @@
                         <!-- Frustration Meter -->
                         <div class="flex-1 max-w-md">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-gray-400 text-sm font-medium">Customer Frustration</span>
+                                <span class="text-gray-400 text-sm font-medium flex items-center gap-2">
+                                    <span id="tm-frustration-emoji" class="text-lg">😊</span>
+                                    Customer Frustration
+                                </span>
                                 <span id="tm-frustration-text" class="text-green-400 font-bold">0%</span>
                             </div>
                             <div class="h-3 bg-gray-700 rounded-full overflow-hidden relative">
@@ -724,19 +913,21 @@
                             AI Agent Trace
                         </h3>
 
-                        <!-- Desktop: Horizontal Waterfall View (dynamically rendered) -->
-                        <div id="tm-spans-desktop" class="tm-span-desktop space-y-3">
-                            <!-- Spans rendered by JavaScript -->
+                        <!-- Desktop: Tree Trace View (Langfuse-style) -->
+                        <div id="tm-trace-desktop" class="tm-trace-desktop hidden md:block">
+                            <div id="tm-trace-tree" class="tm-trace-tree bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+                                <!-- Tree trace items rendered by JavaScript -->
+                            </div>
                         </div>
 
                         <!-- Mobile: Vertical Card View (dynamically rendered) -->
-                        <div id="tm-spans-mobile" class="tm-span-mobile space-y-3">
+                        <div id="tm-spans-mobile" class="tm-span-mobile block md:hidden space-y-3">
                             <!-- Spans rendered by JavaScript -->
                         </div>
                     </div>
 
-                    <!-- Section: Log Viewer -->
-                    <div id="tm-log-viewer" class="mb-8">
+                    <!-- Section: Log Viewer (Mobile Only) -->
+                    <div id="tm-log-viewer" class="mb-8 block md:hidden">
                         <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
                             <i class="fas fa-terminal text-green-400"></i>
                             Log Viewer
@@ -1324,7 +1515,8 @@
                 completedLevels: [],
                 showingMenu: true,
                 totalXP: 0,
-                lastEarnedXP: 0
+                lastEarnedXP: 0,
+                expandedSpans: []
             },
 
             // DOM element references
@@ -1351,12 +1543,22 @@
                     timerContainer: document.getElementById('tm-timer-container'),
                     frustrationText: document.getElementById('tm-frustration-text'),
                     frustrationFill: document.getElementById('tm-frustration-fill'),
+                    frustrationEmoji: document.getElementById('tm-frustration-emoji'),
                     gameContainer: document.getElementById('tm-game'),
                     levelMenu: document.getElementById('tm-level-menu'),
                     ticketId: document.getElementById('tm-ticket-id'),
                     ticketSeverity: document.getElementById('tm-ticket-severity'),
                     ticketReporter: document.getElementById('tm-ticket-reporter'),
-                    ticketDescription: document.getElementById('tm-ticket-description')
+                    ticketDescription: document.getElementById('tm-ticket-description'),
+                    traceDesktop: document.getElementById('tm-trace-desktop'),
+                    traceTree: document.getElementById('tm-trace-tree'),
+                    // Floating bar elements
+                    floatingBar: document.getElementById('tm-floating-bar'),
+                    floatingEmoji: document.getElementById('tm-floating-emoji'),
+                    floatingFrustrationFill: document.getElementById('tm-floating-frustration-fill'),
+                    floatingFrustrationText: document.getElementById('tm-floating-frustration-text'),
+                    floatingTimer: document.getElementById('tm-floating-timer'),
+                    floatingTimerIcon: document.getElementById('tm-floating-timer-icon')
                 };
             },
 
@@ -1401,8 +1603,9 @@
                                     <span class="text-gray-500 font-mono text-sm">${level.id}</span>
                                     <i class="fas fa-lock text-gray-500"></i>
                                 </div>
-                                <h4 class="text-gray-500 font-semibold mb-2">${level.title}</h4>
-                                <p class="text-gray-600 text-sm mb-4">${unlockText}</p>
+                                <h4 class="text-gray-500 font-semibold mb-2"><i class="fas fa-lock mr-2"></i>??? Mystery Incident ???</h4>
+                                <p class="text-gray-400 text-sm mb-2 line-clamp-2">${level.description}</p>
+                                <p class="text-gray-600 text-xs mb-4">${unlockText}</p>
                                 <div class="flex items-center gap-2">
                                     <span class="px-2 py-1 bg-slate-700 text-gray-500 text-xs rounded-full">${level.difficulty}</span>
                                     <span class="px-2 py-1 bg-slate-700 text-gray-500 text-xs rounded-full">${level.xpReward} XP</span>
@@ -1437,6 +1640,7 @@
                 this.currentLevel = this.levels[index];
                 this.state.showingMenu = false;
                 this.state.selectedSpanId = 'span-1';
+                this.state.expandedSpans = ['span-1']; // Reset and auto-expand first span
 
                 // Hide menu, show game
                 if (this.elements.levelMenu) {
@@ -1665,6 +1869,15 @@
 
                 this.elements.timer.className = `font-mono text-2xl font-bold ${colorClass}`;
                 this.elements.timerIcon.className = `fas fa-clock ${iconColor}`;
+
+                // Update floating bar timer
+                if (this.elements.floatingTimer) {
+                    this.elements.floatingTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    this.elements.floatingTimer.className = `text-white font-mono text-xl font-bold ${colorClass}`;
+                }
+                if (this.elements.floatingTimerIcon) {
+                    this.elements.floatingTimerIcon.className = `fas fa-clock ${iconColor}`;
+                }
             },
 
             // Update frustration meter display
@@ -1689,6 +1902,38 @@
                     this.elements.frustrationText.classList.add('tm-frustration-critical');
                 }
                 this.elements.frustrationText.className = `${colorClass} font-bold${frustration >= 75 ? ' tm-frustration-critical' : ''}`;
+
+                // Update emoji based on frustration level
+                let emoji;
+                if (frustration < 20) {
+                    emoji = '😊';
+                } else if (frustration < 40) {
+                    emoji = '🙂';
+                } else if (frustration < 60) {
+                    emoji = '😐';
+                } else if (frustration < 75) {
+                    emoji = '😟';
+                } else if (frustration < 90) {
+                    emoji = '😠';
+                } else {
+                    emoji = '🤬';
+                }
+                
+                if (this.elements.frustrationEmoji) {
+                    this.elements.frustrationEmoji.textContent = emoji;
+                }
+
+                // Update floating bar
+                if (this.elements.floatingEmoji) {
+                    this.elements.floatingEmoji.textContent = emoji;
+                }
+                if (this.elements.floatingFrustrationText) {
+                    this.elements.floatingFrustrationText.textContent = `${frustration}%`;
+                    this.elements.floatingFrustrationText.className = `${colorClass} font-bold text-sm`;
+                }
+                if (this.elements.floatingFrustrationFill) {
+                    this.elements.floatingFrustrationFill.style.width = `${frustration}%`;
+                }
             },
 
             // Pause the timer
@@ -1708,6 +1953,22 @@
                     clearInterval(this.state.timerInterval);
                     this.state.timerInterval = null;
                 }
+                this.hideFloatingBar();
+            },
+
+            // Show floating status bar
+            showFloatingBar() {
+                if (this.elements.floatingBar) {
+                    this.elements.floatingBar.classList.remove('hidden');
+                    this.elements.floatingBar.classList.add('tm-visible');
+                }
+            },
+
+            // Hide floating status bar
+            hideFloatingBar() {
+                if (this.elements.floatingBar) {
+                    this.elements.floatingBar.classList.remove('tm-visible');
+                }
             },
 
             // Game over (frustration hit 100% or time ran out)
@@ -1726,15 +1987,109 @@
             renderSpans() {
                 const level = this.currentLevel;
                 
-                // Desktop view
-                if (this.elements.spansDesktop) {
-                    this.elements.spansDesktop.innerHTML = level.spans.map(span => this.renderSpanDesktop(span)).join('');
-                }
+                // Desktop: Tree trace view
+                this.renderTreeTrace();
                 
                 // Mobile view
                 if (this.elements.spansMobile) {
                     this.elements.spansMobile.innerHTML = level.spans.map(span => this.renderSpanMobile(span)).join('');
                 }
+            },
+
+            // Render tree trace view for desktop (Langfuse-style)
+            renderTreeTrace() {
+                const level = this.currentLevel;
+                if (!this.elements.traceTree) return;
+
+                // Root span (the ticket/request)
+                const rootHtml = `
+                    <div class="tm-trace-item tm-trace-root" data-span-id="root">
+                        <div class="tm-trace-row bg-purple-500/10 border-b border-slate-700">
+                            <div class="tm-trace-icon bg-purple-500/20">
+                                <i class="fas fa-ticket-alt text-purple-400 text-xs"></i>
+                            </div>
+                            <div class="tm-trace-name">
+                                <span class="text-white font-medium">${level.id}</span>
+                                <span class="text-gray-500 text-sm">${level.title}</span>
+                            </div>
+                            <div class="tm-trace-metrics">
+                                <span class="text-purple-400 text-sm">${this.formatLatency(level.spans.reduce((sum, s) => sum + s.latency, 0))}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Child spans
+                const spansHtml = level.spans.map((span, index) => {
+                    const isSelected = span.id === this.state.selectedSpanId;
+                    const isExpanded = this.state.expandedSpans?.includes(span.id);
+                    const statusIcon = this.getStatusIcon(span.status);
+                    const isLast = index === level.spans.length - 1;
+                    
+                    // Metrics display
+                    let metricsHtml = `<span class="text-gray-400 text-sm">${this.formatLatency(span.latency)}</span>`;
+                    if (span.tokensIn || span.tokensOut) {
+                        metricsHtml += `<span class="text-blue-400 text-sm"><i class="fas fa-coins text-xs mr-1"></i>${span.tokensIn || 0}</span>`;
+                    }
+                    if (span.cost) {
+                        metricsHtml += `<span class="text-green-400 text-sm">$${span.cost.toFixed(2)}</span>`;
+                    }
+
+                    // Logs section (shown when expanded)
+                    const logsHtml = isExpanded ? `
+                        <div class="tm-trace-logs">
+                            ${span.logs.map(log => {
+                                const levelColor = this.getLogLevelColor(log.level);
+                                return `
+                                    <div class="py-0.5">
+                                        <span class="text-gray-500 text-xs">[${log.time}]</span>
+                                        <span class="${levelColor} font-semibold text-xs"> ${log.level} </span>
+                                        <span class="text-gray-300 text-sm">${log.message}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    ` : '';
+
+                    return `
+                        <div class="tm-trace-item ${isSelected ? 'tm-selected' : ''}" data-span-id="${span.id}">
+                            <div class="tm-trace-row">
+                                <div class="tm-trace-indent" style="width: 24px;">
+                                    <div class="tm-trace-connector ${isLast ? 'tm-last' : ''}"></div>
+                                </div>
+                                <div class="tm-trace-expand" data-expand="${span.id}">
+                                    <i class="fas fa-chevron-${isExpanded ? 'down' : 'right'} text-xs"></i>
+                                </div>
+                                <div class="tm-trace-icon bg-${span.iconBg}-500/20">
+                                    <i class="fas ${span.icon} text-${span.iconBg}-400 text-xs"></i>
+                                </div>
+                                <div class="tm-trace-name">
+                                    <span class="text-white text-sm">${span.service}</span>
+                                    <span class="px-1.5 py-0.5 bg-slate-700 text-gray-400 text-xs rounded">${this.formatSpanType(span.type)}</span>
+                                    <i class="fas ${statusIcon.icon} ${statusIcon.color} text-xs"></i>
+                                </div>
+                                <div class="tm-trace-metrics">
+                                    ${metricsHtml}
+                                </div>
+                            </div>
+                            ${logsHtml}
+                        </div>
+                    `;
+                }).join('');
+
+                this.elements.traceTree.innerHTML = rootHtml + spansHtml;
+            },
+
+            // Format latency for display (handle large values)
+            formatLatency(ms) {
+                if (ms >= 3600000) {
+                    return `${(ms / 3600000).toFixed(1)}h`;
+                } else if (ms >= 60000) {
+                    return `${(ms / 60000).toFixed(1)}m`;
+                } else if (ms >= 1000) {
+                    return `${(ms / 1000).toFixed(1)}s`;
+                }
+                return `${ms}ms`;
             },
 
             // Render a single span (desktop view)
@@ -1895,6 +2250,25 @@
 
             // Bind event listeners
             bindEvents() {
+                // Scroll handler for floating bar
+                window.addEventListener('scroll', () => {
+                    if (!this.state.isPlaying || this.state.showingMenu) {
+                        this.hideFloatingBar();
+                        return;
+                    }
+                    
+                    const timerEl = this.elements.timerContainer;
+                    if (timerEl) {
+                        const rect = timerEl.getBoundingClientRect();
+                        // Show floating bar when timer is scrolled out of view
+                        if (rect.bottom < 0) {
+                            this.showFloatingBar();
+                        } else {
+                            this.hideFloatingBar();
+                        }
+                    }
+                });
+
                 // Click handler for level cards
                 document.getElementById('tm-level-cards')?.addEventListener('click', (e) => {
                     const card = e.target.closest('.tm-level-card');
@@ -1914,12 +2288,33 @@
                     });
                 }
 
-                // Click handler for spans (event delegation)
+                // Click handler for spans - mobile cards and desktop tree (event delegation)
                 document.getElementById('tm-game').addEventListener('click', (e) => {
+                    // Handle mobile span cards
                     const spanEl = e.target.closest('.tm-span');
                     if (spanEl) {
                         const spanId = spanEl.dataset.spanId;
                         if (spanId) {
+                            this.selectSpan(spanId);
+                        }
+                        return;
+                    }
+
+                    // Handle desktop tree expand/collapse
+                    const expandEl = e.target.closest('.tm-trace-expand');
+                    if (expandEl) {
+                        const spanId = expandEl.dataset.expand;
+                        if (spanId) {
+                            this.toggleSpanExpand(spanId);
+                        }
+                        return;
+                    }
+
+                    // Handle desktop tree item selection
+                    const traceItem = e.target.closest('.tm-trace-item');
+                    if (traceItem) {
+                        const spanId = traceItem.dataset.spanId;
+                        if (spanId && spanId !== 'root') {
                             this.selectSpan(spanId);
                         }
                     }
@@ -2044,25 +2439,47 @@
                 this.startTimer(); // Restart the timer
             },
 
+            // Toggle span expand/collapse in tree view
+            toggleSpanExpand(spanId) {
+                const index = this.state.expandedSpans.indexOf(spanId);
+                if (index === -1) {
+                    this.state.expandedSpans.push(spanId);
+                } else {
+                    this.state.expandedSpans.splice(index, 1);
+                }
+                this.renderTreeTrace();
+            },
+
             // Select a span and show its logs
             selectSpan(spanId) {
                 this.state.selectedSpanId = spanId;
                 
-                // Update visual selection
+                // Update visual selection for mobile cards
                 document.querySelectorAll('.tm-span').forEach(el => {
+                    el.classList.toggle('tm-selected', el.dataset.spanId === spanId);
+                });
+
+                // Update visual selection for desktop tree items
+                document.querySelectorAll('.tm-trace-item').forEach(el => {
                     el.classList.toggle('tm-selected', el.dataset.spanId === spanId);
                 });
                 
                 // Find span data
                 const span = this.currentLevel.spans.find(s => s.id === spanId);
                 if (!span) return;
+
+                // Auto-expand selected span in tree view
+                if (!this.state.expandedSpans.includes(spanId)) {
+                    this.state.expandedSpans.push(spanId);
+                    this.renderTreeTrace();
+                }
                 
-                // Update log viewer title
+                // Mobile: Update log viewer title
                 if (this.elements.logTitle) {
                     this.elements.logTitle.textContent = span.service;
                 }
                 
-                // Update log content
+                // Mobile: Update log content
                 if (this.elements.logContent) {
                     this.elements.logContent.innerHTML = span.logs.map(log => {
                         const levelClass = this.getLogLevelClass(log.level);
