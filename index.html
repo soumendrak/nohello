@@ -615,6 +615,11 @@
                 <div id="tm-level-cards" class="grid md:grid-cols-3 gap-6">
                     <!-- Level cards rendered by JavaScript -->
                 </div>
+                <div class="text-center mt-8">
+                    <button id="tm-reset-progress" class="text-gray-500 hover:text-gray-300 text-sm transition-colors">
+                        <i class="fas fa-redo mr-1"></i>Reset Progress
+                    </button>
+                </div>
             </div>
 
             <!-- Game Container (hidden initially) -->
@@ -1144,6 +1149,7 @@
             // Initialize the game
             init() {
                 this.cacheElements();
+                this.loadPlayerData(); // Load saved progress
                 this.bindEvents();
                 this.showLevelMenu();
             },
@@ -1310,6 +1316,63 @@
             completeLevel() {
                 if (!this.state.completedLevels.includes(this.currentLevel.id)) {
                     this.state.completedLevels.push(this.currentLevel.id);
+                    this.savePlayerData();
+                }
+            },
+
+            // LocalStorage key
+            STORAGE_KEY: 'traceMaster_playerData',
+
+            // Save player data to LocalStorage
+            savePlayerData() {
+                const data = {
+                    completedLevels: this.state.completedLevels,
+                    lastPlayed: new Date().toISOString()
+                };
+                try {
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+                } catch (e) {
+                    console.warn('Failed to save game data:', e);
+                }
+            },
+
+            // Load player data from LocalStorage
+            loadPlayerData() {
+                try {
+                    const data = localStorage.getItem(this.STORAGE_KEY);
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        if (parsed.completedLevels && Array.isArray(parsed.completedLevels)) {
+                            this.state.completedLevels = parsed.completedLevels;
+                        }
+                        return parsed;
+                    }
+                } catch (e) {
+                    console.warn('Failed to load game data:', e);
+                }
+                return null;
+            },
+
+            // Reset all progress
+            resetProgress() {
+                this.state.completedLevels = [];
+                try {
+                    localStorage.removeItem(this.STORAGE_KEY);
+                } catch (e) {
+                    console.warn('Failed to reset game data:', e);
+                }
+                // Re-render level menu to show cleared checkmarks
+                this.renderLevelMenu();
+                
+                // Flash the reset button to show it worked
+                const resetBtn = document.getElementById('tm-reset-progress');
+                if (resetBtn) {
+                    resetBtn.innerHTML = '<i class="fas fa-check mr-1"></i>Progress Reset!';
+                    resetBtn.classList.add('text-green-400');
+                    setTimeout(() => {
+                        resetBtn.innerHTML = '<i class="fas fa-redo mr-1"></i>Reset Progress';
+                        resetBtn.classList.remove('text-green-400');
+                    }, 2000);
                 }
             },
 
@@ -1617,6 +1680,14 @@
                         }
                     }
                 });
+
+                // Reset progress button
+                const resetBtn = document.getElementById('tm-reset-progress');
+                if (resetBtn) {
+                    resetBtn.addEventListener('click', () => {
+                        this.resetProgress();
+                    });
+                }
 
                 // Click handler for spans (event delegation)
                 document.getElementById('tm-game').addEventListener('click', (e) => {
