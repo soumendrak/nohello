@@ -261,6 +261,63 @@
             .tm-span-desktop { display: block; }
             .tm-span-mobile { display: none; }
         }
+
+        /* Modal styles */
+        .tm-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .tm-modal.hidden {
+            display: none;
+        }
+
+        .tm-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .tm-modal-content {
+            position: relative;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 28rem;
+            width: 100%;
+            animation: tm-modal-in 0.3s ease-out;
+        }
+
+        @keyframes tm-modal-in {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Shake animation for wrong answer */
+        .tm-shake {
+            animation: tm-shake 0.5s ease-in-out;
+        }
+
+        @keyframes tm-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -639,36 +696,36 @@
                             <i class="fas fa-wrench text-orange-400"></i>
                             Select Fix Action
                         </h3>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                        <div id="tm-actions" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="adjust-prompt">
                                 <i class="fas fa-edit text-2xl text-blue-400 mb-2"></i>
                                 <div class="text-sm font-medium">Adjust Prompt</div>
                             </button>
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="update-rag">
                                 <i class="fas fa-sync-alt text-2xl text-amber-400 mb-2"></i>
                                 <div class="text-sm font-medium">Update RAG Index</div>
                             </button>
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="tune-guardrails">
                                 <i class="fas fa-sliders-h text-2xl text-purple-400 mb-2"></i>
                                 <div class="text-sm font-medium">Tune Guardrails</div>
                             </button>
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="increase-context">
                                 <i class="fas fa-expand-arrows-alt text-2xl text-green-400 mb-2"></i>
                                 <div class="text-sm font-medium">Increase Context</div>
                             </button>
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="add-few-shot">
                                 <i class="fas fa-list-ol text-2xl text-cyan-400 mb-2"></i>
                                 <div class="text-sm font-medium">Add Few-Shot</div>
                             </button>
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="fix-sql-schema">
                                 <i class="fas fa-table text-2xl text-pink-400 mb-2"></i>
                                 <div class="text-sm font-medium">Fix SQL Schema</div>
                             </button>
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="fix-tool-schema">
                                 <i class="fas fa-plug text-2xl text-red-400 mb-2"></i>
                                 <div class="text-sm font-medium">Fix Tool Schema</div>
                             </button>
-                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600">
+                            <button class="tm-action-btn bg-slate-800 hover:bg-slate-700 text-white rounded-lg p-4 text-center border border-slate-600" data-action="clear-cache">
                                 <i class="fas fa-eraser text-2xl text-gray-400 mb-2"></i>
                                 <div class="text-sm font-medium">Clear Cache</div>
                             </button>
@@ -709,6 +766,53 @@
                 <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                     <i class="fas fa-play mr-2"></i>Start Game
                 </button>
+            </div>
+        </div>
+
+        <!-- Result Modal (Success/Failure) -->
+        <div id="tm-modal" class="tm-modal hidden">
+            <div class="tm-modal-backdrop"></div>
+            <div class="tm-modal-content">
+                <!-- Success State -->
+                <div id="tm-modal-success" class="hidden">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check-circle text-5xl text-green-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Ticket Resolved!</h3>
+                        <p class="text-gray-400">You found the root cause!</p>
+                    </div>
+                </div>
+
+                <!-- Failure State -->
+                <div id="tm-modal-failure" class="hidden">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-times-circle text-5xl text-red-400"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Wrong Fix!</h3>
+                        <p class="text-gray-400">That wasn't the root cause.</p>
+                    </div>
+                </div>
+
+                <!-- Explanation (shown for both) -->
+                <div class="bg-slate-800 rounded-lg p-4 mb-6">
+                    <h4 class="text-white font-semibold mb-2 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-yellow-400"></i>
+                        Root Cause Analysis
+                    </h4>
+                    <p id="tm-modal-explanation" class="text-gray-300 text-sm leading-relaxed"></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3">
+                    <button id="tm-modal-retry" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-redo mr-2"></i>Try Again
+                    </button>
+                    <button id="tm-modal-next" class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors hidden">
+                        <i class="fas fa-arrow-right mr-2"></i>Next Ticket
+                    </button>
+                </div>
             </div>
         </div>
     </section>
@@ -1083,6 +1187,93 @@
                         }
                     }
                 });
+
+                // Click handler for action buttons
+                document.getElementById('tm-actions').addEventListener('click', (e) => {
+                    const btn = e.target.closest('.tm-action-btn');
+                    if (btn) {
+                        const action = btn.dataset.action;
+                        if (action) {
+                            this.submitAction(action);
+                        }
+                    }
+                });
+
+                // Modal button handlers
+                document.getElementById('tm-modal-retry').addEventListener('click', () => {
+                    this.hideModal();
+                    this.resetLevel();
+                });
+
+                document.getElementById('tm-modal-next').addEventListener('click', () => {
+                    this.hideModal();
+                    // For now, just reset (will implement level progression in Milestone 5)
+                    this.resetLevel();
+                });
+
+                // Close modal on backdrop click
+                document.querySelector('.tm-modal-backdrop')?.addEventListener('click', () => {
+                    this.hideModal();
+                });
+            },
+
+            // Submit an action (fix attempt)
+            submitAction(action) {
+                const isCorrect = action === this.currentLevel.correctAction;
+                
+                if (isCorrect) {
+                    this.showModal(true);
+                } else {
+                    // Shake the game container for wrong answer
+                    const gameEl = document.getElementById('tm-game');
+                    gameEl.classList.add('tm-shake');
+                    setTimeout(() => gameEl.classList.remove('tm-shake'), 500);
+                    
+                    // Show failure modal
+                    this.showModal(false);
+                }
+            },
+
+            // Show result modal
+            showModal(isSuccess) {
+                const modal = document.getElementById('tm-modal');
+                const successEl = document.getElementById('tm-modal-success');
+                const failureEl = document.getElementById('tm-modal-failure');
+                const explanationEl = document.getElementById('tm-modal-explanation');
+                const nextBtn = document.getElementById('tm-modal-next');
+                const retryBtn = document.getElementById('tm-modal-retry');
+
+                // Show/hide success/failure states
+                successEl.classList.toggle('hidden', !isSuccess);
+                failureEl.classList.toggle('hidden', isSuccess);
+
+                // Show explanation
+                explanationEl.textContent = this.currentLevel.explanation;
+
+                // Show/hide buttons based on result
+                if (isSuccess) {
+                    nextBtn.classList.remove('hidden');
+                    retryBtn.textContent = 'Play Again';
+                    retryBtn.innerHTML = '<i class="fas fa-redo mr-2"></i>Play Again';
+                } else {
+                    nextBtn.classList.add('hidden');
+                    retryBtn.innerHTML = '<i class="fas fa-redo mr-2"></i>Try Again';
+                }
+
+                // Show modal
+                modal.classList.remove('hidden');
+            },
+
+            // Hide result modal
+            hideModal() {
+                document.getElementById('tm-modal').classList.add('hidden');
+            },
+
+            // Reset level to initial state
+            resetLevel() {
+                this.state.selectedSpanId = 'span-1';
+                this.renderSpans();
+                this.selectSpan('span-1');
             },
 
             // Select a span and show its logs
