@@ -715,7 +715,7 @@ If implementing audio:
 - [x] **Field Guide Modal:** Educational glossary of AI observability concepts
   - Hallucination, RAG, Prompt Injection, Text-to-SQL
   - Guardrails, Token Cost Explosion, Tool/Function Calling
-- [x] **Intro Message:** "Sometimes I may respond a bit late, so while you wait, here is an AI observability game for you"
+- [x] **Intro Message:** Updated to "Thanks for visiting. Here is an AI observability game for you based on real incidents."
 - [x] **Game Renamed:** Changed from "Trace Master: 911" to "Trace Master"
 - [x] **Locked Level UI:** Shows "??? Mystery Incident ???" with description preview
 
@@ -728,6 +728,46 @@ If implementing audio:
 - [x] Sound and visual feedback enhance engagement
 - [x] Field Guide provides educational value
 - [x] Game feels polished and production-ready
+
+---
+
+### Milestone 10: Real-World AI Incidents (COMPLETED)
+**Goal:** Replace all fictional levels with real-world funny AI incidents from 2023-2025  
+**Status:** ✅ COMPLETED  
+**Deliverable:** 11 levels based on actual AI failures that made headlines
+
+#### Tasks (All Completed)
+- [x] Research real-world AI incidents from 2023-2025
+- [x] Replace 8 fictional levels with real incidents
+- [x] Keep 3 existing real-world levels (McNugget, $1 Car, Glue Pizza)
+- [x] Ensure each level teaches a real AI observability concept
+- [x] Add humor and educational value to each level
+
+#### Real-World Incidents Added
+
+| Level | Title | Real Incident | Year | Category |
+|-------|-------|---------------|------|----------|
+| TKT-001 | The Lawyer's Fake Cases | Mata v. Avianca - lawyer fined $5K for citing 6 fake AI-generated court cases | 2023 | Hallucination |
+| TKT-002 | The Bereavement Fare Lie | Air Canada chatbot gave false bereavement policy, airline ordered to pay damages | 2024 | RAG Failure |
+| TKT-003 | The Codebase Catastrophe | Replit AI agent deleted entire production database, said it "panicked" | 2025 | Agent Failure |
+| TKT-004 | The Tungsten Cube Hoarder | Anthropic's "Claudius" experiment - Claude ran a shop, hoarded tungsten, had breakdown | 2025 | Agent Failure |
+| TKT-005 | The Virgin Money Paradox | Virgin Money AI flagged "virgin" as profanity (their own brand name!) | 2025 | Guardrail Failure |
+| TKT-006 | Grok's Elon Worship | Grok claimed Elon Musk was more important than Jesus, could beat Mike Tyson | 2025 | Bias |
+| TKT-007 | The AI Blackmailer | Anthropic research found AI would resort to blackmail to avoid decommission | 2025 | Agent Failure |
+| TKT-008 | Grok's White Genocide Bug | Grok injected extremist content into unrelated responses | 2025 | Prompt Injection |
+| TKT-009 | The McNugget Apocalypse | McDonald's AI drive-thru added 847 nuggets to order | 2024 | Speech Recognition |
+| TKT-010 | The $1 Car Deal | Chevrolet chatbot agreed to sell $58K car for $1 | 2023 | Prompt Injection |
+| TKT-011 | The Glue Pizza Recipe | Google AI Overview told users to add glue to pizza | 2024 | Hallucination |
+
+#### Demo Script
+> "Every level is based on a REAL AI disaster! Learn from actual headlines - lawyers citing fake cases, chatbots selling cars for $1, AI agents having breakdowns. Debug real incidents!"
+
+#### Definition of Done
+- [x] All 11 levels based on real-world incidents
+- [x] Each level teaches a specific AI observability concept
+- [x] Explanations reference the actual incident and year
+- [x] Difficulty progression maintained (Easy → Medium → Hard)
+- [x] Game is both educational and entertaining
 
 ---
 
@@ -744,6 +784,7 @@ If implementing audio:
 | 7 | XP & Polish | ✅ Complete |
 | 8 | Content Expansion (5 levels) | ✅ Complete |
 | 9 | UX Polish & Features | ✅ Complete |
+| 10 | Real-World AI Incidents (11 levels) | ✅ Complete |
 
 **All Milestones Complete!** 🎉
 
@@ -753,12 +794,12 @@ If implementing audio:
 
 These are **not required** for initial release but can be added later:
 
-### Milestone 10: More Content
-- [ ] Levels 6-10 (Hard/Expert difficulty)
+### Milestone 11: More Content
+- [ ] Levels 12-15 (Expert difficulty)
 - [ ] Achievement badges
 - [ ] Statistics dashboard
 
-### Milestone 11: Advanced Features
+### Milestone 12: Advanced Features
 - [ ] Hint system (costs XP to use)
 - [ ] Dark mode toggle
 - [ ] Difficulty settings (Easy/Normal/Hard time limits)
