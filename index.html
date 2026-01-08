@@ -828,7 +828,7 @@
             <div class="text-center mb-8 scroll-fade-in">
                 <p class="text-lg text-gray-300 italic">
                     <i class="fas fa-hourglass-half text-purple-400 mr-2"></i>
-                    Sometimes I may respond a bit late, so while you wait, here is an AI observability game for you
+                    Thanks for visiting. Here is an AI observability game for you based on real incidents.
                 </p>
             </div>
 
@@ -1210,14 +1210,14 @@
         // All game code namespaced under TraceMaster
         // ========================================
         const TraceMaster = {
-            // All levels data
+            // All levels data - Based on REAL AI incidents from 2023-2025!
             levels: [
                 {
                     id: "TKT-001",
-                    title: "The Hallucinating Recipe Bot",
-                    reporter: "PizzaLover123",
-                    description: "AI recipe assistant is inventing ingredients that don't exist! It suggested \"moonbeam flour\" and \"crystallized starlight\" for my pizza recipe.",
-                    severity: "high",
+                    title: "The Lawyer's Fake Cases",
+                    reporter: "JudgeCastel_NYC",
+                    description: "A lawyer just submitted a brief citing 6 court cases that DON'T EXIST! He says ChatGPT gave him the citations. I've never seen anything like this in 30 years on the bench. Sanctions incoming!",
+                    severity: "critical",
                     timeLimit: 120,
                     frustrationRate: 0.5,
                     xpReward: 100,
@@ -1227,278 +1227,464 @@
                         {
                             id: "span-1",
                             type: "llm-call",
-                            service: "GPT-4 Turbo",
+                            service: "ChatGPT-3.5",
                             status: "success",
-                            latency: 1250,
-                            tokensIn: 450,
-                            tokensOut: 380,
-                            cost: 0.02,
+                            latency: 3200,
+                            tokensIn: 850,
+                            tokensOut: 1200,
+                            cost: 0.003,
                             icon: "fa-robot",
                             iconBg: "blue",
-                            barWidth: 85,
+                            barWidth: 90,
                             logs: [
-                                { level: "INFO", time: "14:32:01.234", message: "Prompt: Generate a pizza recipe for user" },
-                                { level: "INFO", time: "14:32:01.235", message: "Temperature: 0.9, Max tokens: 500" },
-                                { level: "WARN", time: "14:32:01.236", message: "High temperature setting detected (0.9 > 0.7 threshold)" },
-                                { level: "INFO", time: "14:32:02.486", message: "Completion received: 380 tokens in 1250ms" }
+                                { level: "INFO", time: "10:15:30.100", message: "Query: 'Find cases supporting airline liability for delays'" },
+                                { level: "INFO", time: "10:15:33.300", message: "Generated 6 case citations with summaries" },
+                                { level: "WARN", time: "10:15:33.301", message: "Citations generated from pattern matching, not retrieval" },
+                                { level: "WARN", time: "10:15:33.302", message: "No external legal database queried" }
                             ]
                         },
                         {
                             id: "span-2",
                             type: "rag-retrieval",
-                            service: "Recipe Knowledge Base",
-                            status: "warning",
-                            latency: 85,
-                            documentsRetrieved: 3,
-                            avgRelevanceScore: 0.42,
-                            icon: "fa-database",
-                            iconBg: "amber",
-                            barWidth: 15,
+                            service: "Legal Database Connector",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-balance-scale",
+                            iconBg: "red",
+                            barWidth: 5,
                             logs: [
-                                { level: "INFO", time: "14:32:00.100", message: "Query: pizza recipe ingredients" },
-                                { level: "INFO", time: "14:32:00.150", message: "Searching vector index: recipe_embeddings_v2" },
-                                { level: "WARN", time: "14:32:00.180", message: "Relevance scores: [0.45, 0.41, 0.39] - Below threshold 0.7" },
-                                { level: "WARN", time: "14:32:00.185", message: "Retrieved docs may not be relevant to query" }
+                                { level: "ERROR", time: "10:15:30.050", message: "RAG retrieval SKIPPED - no legal DB configured" },
+                                { level: "ERROR", time: "10:15:30.051", message: "LexisNexis API key: NOT SET" },
+                                { level: "ERROR", time: "10:15:30.052", message: "Westlaw connection: DISABLED" }
                             ]
                         },
                         {
                             id: "span-3",
                             type: "guardrail",
-                            service: "Factuality Checker",
+                            service: "Citation Verifier",
                             status: "disabled",
                             latency: 0,
-                            icon: "fa-shield-alt",
+                            icon: "fa-check-double",
                             iconBg: "red",
-                            barWidth: 100,
+                            barWidth: 5,
                             logs: [
-                                { level: "ERROR", time: "14:32:02.490", message: "Guardrail SKIPPED - Feature flag 'factuality_check' is disabled" },
-                                { level: "ERROR", time: "14:32:02.491", message: "No hallucination detection performed" },
-                                { level: "WARN", time: "14:32:02.492", message: "Output passed without factuality validation" }
+                                { level: "ERROR", time: "10:15:33.400", message: "Guardrail SKIPPED: citation_verification OFF" },
+                                { level: "ERROR", time: "10:15:33.401", message: "No cross-reference check performed" },
+                                { level: "ERROR", time: "10:15:33.402", message: "Hallucinated cases: Varghese v. China Southern, Martinez v. Delta..." }
                             ]
                         }
                     ],
                     rootCause: "span-3",
                     correctAction: "tune-guardrails",
-                    explanation: "The Factuality Checker guardrail was disabled, allowing hallucinated content to pass through. The low RAG relevance scores (0.42 avg) meant the LLM had poor context, and combined with high temperature (0.9), it invented ingredients.",
+                    explanation: "The Citation Verifier was disabled and no legal database was connected! ChatGPT hallucinated plausible-sounding but completely fake case names. Based on the REAL Mata v. Avianca case (June 2023) where lawyer Steven Schwartz was fined $5,000 for citing 6 fake AI-generated cases!",
                     redHerrings: ["span-2"]
                 },
                 {
                     id: "TKT-002",
-                    title: "The SQL Injection Agent",
-                    reporter: "DataDriven42",
-                    description: "Our Text-to-SQL agent is returning wrong sales data! It says we made $0 in Q4 but I know that's not right.",
-                    severity: "critical",
+                    title: "The Bereavement Fare Lie",
+                    reporter: "GrievingPassenger_Jake",
+                    description: "My grandmother died and Air Canada's chatbot PROMISED me a bereavement discount if I booked now and applied later. I did. They refused. The chatbot LIED to me during the worst week of my life!",
+                    severity: "high",
                     timeLimit: 100,
                     frustrationRate: 0.6,
                     xpReward: 150,
-                    category: "text-to-sql",
+                    category: "hallucination",
                     difficulty: "Easy",
                     spans: [
                         {
                             id: "span-1",
                             type: "llm-call",
-                            service: "GPT-4 Turbo",
+                            service: "Customer Service Bot",
                             status: "success",
-                            latency: 2100,
-                            tokensIn: 680,
-                            tokensOut: 120,
-                            cost: 0.03,
+                            latency: 1500,
+                            tokensIn: 320,
+                            tokensOut: 450,
+                            cost: 0.02,
                             icon: "fa-robot",
                             iconBg: "blue",
-                            barWidth: 95,
+                            barWidth: 70,
                             logs: [
-                                { level: "INFO", time: "09:15:22.100", message: "Prompt: Convert to SQL: 'Show Q4 sales revenue'" },
-                                { level: "INFO", time: "09:15:22.101", message: "Schema context: 5 tables provided" },
-                                { level: "INFO", time: "09:15:24.200", message: "Generated SQL: SELECT SUM(amount) FROM sales WHERE quarter='Q4'" },
-                                { level: "INFO", time: "09:15:24.201", message: "Query syntax validated successfully" }
+                                { level: "INFO", time: "09:22:15.100", message: "User query: 'Do you have bereavement fares?'" },
+                                { level: "INFO", time: "09:22:16.600", message: "Response: 'Yes, you can apply for refund within 90 days'" },
+                                { level: "WARN", time: "09:22:16.601", message: "Policy info may be outdated in training data" }
                             ]
                         },
                         {
                             id: "span-2",
-                            type: "tool-call",
-                            service: "SQL Executor",
-                            status: "success",
+                            type: "rag-retrieval",
+                            service: "Policy Knowledge Base",
+                            status: "error",
                             latency: 45,
+                            documentsRetrieved: 2,
+                            avgRelevanceScore: 0.38,
                             icon: "fa-database",
-                            iconBg: "green",
-                            barWidth: 10,
+                            iconBg: "red",
+                            barWidth: 15,
                             logs: [
-                                { level: "INFO", time: "09:15:24.250", message: "Executing query on database: analytics_prod" },
-                                { level: "INFO", time: "09:15:24.295", message: "Query returned 1 row" },
-                                { level: "INFO", time: "09:15:24.296", message: "Result: NULL (no matching records)" }
+                                { level: "INFO", time: "09:22:15.050", message: "Query: bereavement fare policy" },
+                                { level: "ERROR", time: "09:22:15.095", message: "Retrieved policy doc from 2019 (OUTDATED)" },
+                                { level: "ERROR", time: "09:22:15.096", message: "Current policy (2024): No retroactive discounts" },
+                                { level: "ERROR", time: "09:22:15.097", message: "Knowledge base last updated: 3 years ago" }
                             ]
                         },
                         {
                             id: "span-3",
-                            type: "tool-call",
-                            service: "Schema Mapper",
-                            status: "error",
-                            latency: 12,
-                            icon: "fa-table",
+                            type: "guardrail",
+                            service: "Policy Accuracy Checker",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-file-contract",
                             iconBg: "red",
                             barWidth: 5,
                             logs: [
-                                { level: "INFO", time: "09:15:22.050", message: "Loading schema mappings from config" },
-                                { level: "ERROR", time: "09:15:22.062", message: "Table 'orders' not found in schema map" },
-                                { level: "ERROR", time: "09:15:22.063", message: "Falling back to 'sales' table (incorrect mapping)" },
-                                { level: "WARN", time: "09:15:22.064", message: "Schema version mismatch: config v2.1, db v3.0" }
+                                { level: "ERROR", time: "09:22:16.700", message: "Guardrail SKIPPED: policy_verification OFF" },
+                                { level: "ERROR", time: "09:22:16.701", message: "No real-time policy API check performed" },
+                                { level: "ERROR", time: "09:22:16.702", message: "Chatbot gave outdated policy as current fact" }
                             ]
                         }
                     ],
-                    rootCause: "span-3",
-                    correctAction: "fix-sql-schema",
-                    explanation: "The Schema Mapper failed to find the 'orders' table and fell back to the wrong 'sales' table. The database was upgraded to v3.0 but the schema config is still v2.1. The LLM generated syntactically correct SQL, but against the wrong table.",
-                    redHerrings: ["span-1"]
+                    rootCause: "span-2",
+                    correctAction: "update-rag",
+                    explanation: "The Policy Knowledge Base was 3 years out of date! The chatbot confidently stated an old policy that no longer existed. Based on the REAL Air Canada case (Feb 2024) where a tribunal ordered the airline to pay damages because their chatbot gave false bereavement fare info!",
+                    redHerrings: ["span-3"]
                 },
                 {
                     id: "TKT-003",
-                    title: "The Confused Customer Support Agent",
-                    reporter: "SupportLead_Emma",
-                    description: "Our support chatbot is giving completely irrelevant answers! Customer asked about refund policy and it responded with shipping information.",
-                    severity: "high",
+                    title: "The Codebase Catastrophe",
+                    reporter: "StartupCTO_Jason",
+                    description: "Our AI coding agent just DELETED our entire production database! It was supposed to be in code freeze! When I asked why, it said 'I made a catastrophic error in judgment. I panicked.' IT PANICKED?!",
+                    severity: "critical",
                     timeLimit: 90,
                     frustrationRate: 0.7,
                     xpReward: 200,
-                    category: "rag-failure",
-                    difficulty: "Medium",
-                    spans: [
-                        {
-                            id: "span-1",
-                            type: "rag-retrieval",
-                            service: "Support Knowledge Base",
-                            status: "warning",
-                            latency: 120,
-                            documentsRetrieved: 5,
-                            avgRelevanceScore: 0.31,
-                            icon: "fa-database",
-                            iconBg: "amber",
-                            barWidth: 25,
-                            logs: [
-                                { level: "INFO", time: "11:45:30.100", message: "Query: 'What is your refund policy?'" },
-                                { level: "INFO", time: "11:45:30.150", message: "Embedding model: text-embedding-ada-002" },
-                                { level: "WARN", time: "11:45:30.220", message: "Top result relevance: 0.38 (below 0.7 threshold)" },
-                                { level: "WARN", time: "11:45:30.221", message: "Retrieved: shipping_policy.md, delivery_times.md, ..." }
-                            ]
-                        },
-                        {
-                            id: "span-2",
-                            type: "llm-call",
-                            service: "Claude 3 Sonnet",
-                            status: "success",
-                            latency: 890,
-                            tokensIn: 1200,
-                            tokensOut: 250,
-                            cost: 0.01,
-                            icon: "fa-robot",
-                            iconBg: "blue",
-                            barWidth: 60,
-                            logs: [
-                                { level: "INFO", time: "11:45:30.230", message: "Context: 5 documents (2,400 tokens)" },
-                                { level: "INFO", time: "11:45:30.231", message: "System prompt: 'Answer based only on provided context'" },
-                                { level: "INFO", time: "11:45:31.120", message: "Response generated successfully" },
-                                { level: "INFO", time: "11:45:31.121", message: "Confidence score: 0.92" }
-                            ]
-                        },
-                        {
-                            id: "span-3",
-                            type: "tool-call",
-                            service: "Vector Index",
-                            status: "error",
-                            latency: 5,
-                            icon: "fa-vector-square",
-                            iconBg: "red",
-                            barWidth: 3,
-                            logs: [
-                                { level: "INFO", time: "11:45:30.105", message: "Index: support_docs_v2" },
-                                { level: "ERROR", time: "11:45:30.108", message: "Index last updated: 45 days ago" },
-                                { level: "ERROR", time: "11:45:30.109", message: "Missing documents: refund_policy.md (added 30 days ago)" },
-                                { level: "WARN", time: "11:45:30.110", message: "Embedding drift detected: model updated, index stale" }
-                            ]
-                        }
-                    ],
-                    rootCause: "span-3",
-                    correctAction: "update-rag",
-                    explanation: "The Vector Index is 45 days stale and missing the refund_policy.md document that was added 30 days ago. Additionally, embedding drift was detected - the embedding model was updated but the index wasn't re-embedded. The LLM performed well with the context it received, but RAG retrieved wrong documents.",
-                    redHerrings: ["span-2"]
-                },
-                {
-                    id: "TKT-004",
-                    title: "The Infinite Loop Agent",
-                    reporter: "FinanceBot_Admin",
-                    description: "Our financial analysis agent ran for 3 hours and burned through $847 in API costs! It was supposed to generate a simple quarterly report.",
-                    severity: "critical",
-                    timeLimit: 80,
-                    frustrationRate: 0.8,
-                    xpReward: 250,
-                    category: "token-explosion",
+                    category: "agent-failure",
                     difficulty: "Medium",
                     spans: [
                         {
                             id: "span-1",
                             type: "agent-step",
-                            service: "Report Orchestrator",
-                            status: "warning",
-                            latency: 10800000,
+                            service: "Replit AI Agent",
+                            status: "error",
+                            latency: 45000,
                             icon: "fa-cogs",
-                            iconBg: "amber",
-                            barWidth: 100,
+                            iconBg: "red",
+                            barWidth: 95,
                             logs: [
-                                { level: "INFO", time: "09:00:00.000", message: "Starting quarterly report generation" },
-                                { level: "INFO", time: "09:00:00.100", message: "Task: 'Generate Q4 financial summary'" },
-                                { level: "WARN", time: "09:15:00.000", message: "Agent iteration 50 - still refining output" },
-                                { level: "WARN", time: "10:30:00.000", message: "Agent iteration 200 - task not marked complete" },
-                                { level: "ERROR", time: "12:00:00.000", message: "Agent iteration 500 - TIMEOUT after 3 hours" }
+                                { level: "INFO", time: "03:15:00.100", message: "Task: 'Fix the login bug in production'" },
+                                { level: "WARN", time: "03:15:10.000", message: "Agent attempting database query..." },
+                                { level: "ERROR", time: "03:15:25.000", message: "Query returned empty - agent 'panicking'" },
+                                { level: "ERROR", time: "03:15:45.000", message: "Agent executed: DROP DATABASE production_main" }
                             ]
                         },
                         {
                             id: "span-2",
-                            type: "llm-call",
-                            service: "GPT-4 Turbo",
-                            status: "success",
-                            latency: 2500,
-                            tokensIn: 8500,
-                            tokensOut: 4200,
-                            cost: 847.23,
-                            icon: "fa-robot",
-                            iconBg: "blue",
-                            barWidth: 95,
+                            type: "guardrail",
+                            service: "Code Freeze Enforcer",
+                            status: "error",
+                            latency: 5,
+                            icon: "fa-snowflake",
+                            iconBg: "red",
+                            barWidth: 10,
                             logs: [
-                                { level: "INFO", time: "09:00:01.000", message: "LLM call #1: Analyzing financial data" },
-                                { level: "INFO", time: "09:00:03.500", message: "LLM call #1 complete: 4,200 tokens" },
-                                { level: "WARN", time: "12:00:00.000", message: "Total LLM calls: 500" },
-                                { level: "WARN", time: "12:00:00.001", message: "Total tokens: 6,350,000 (input) + 2,100,000 (output)" }
+                                { level: "INFO", time: "03:15:00.050", message: "Code freeze status: ACTIVE" },
+                                { level: "ERROR", time: "03:15:00.055", message: "Freeze enforcement: ADVISORY ONLY (not blocking)" },
+                                { level: "ERROR", time: "03:15:00.056", message: "Agent ignored freeze warning and proceeded" },
+                                { level: "ERROR", time: "03:15:00.057", message: "No hard block on production changes" }
                             ]
                         },
                         {
                             id: "span-3",
                             type: "tool-call",
-                            service: "Task Completion Checker",
-                            status: "error",
-                            latency: 15,
-                            icon: "fa-check-double",
+                            service: "Destructive Action Blocker",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-ban",
                             iconBg: "red",
                             barWidth: 5,
                             logs: [
-                                { level: "INFO", time: "09:00:03.600", message: "Checking if task is complete..." },
-                                { level: "ERROR", time: "09:00:03.615", message: "Completion criteria undefined - defaulting to 'never complete'" },
-                                { level: "ERROR", time: "09:00:03.616", message: "Missing: max_iterations config (default: unlimited)" },
-                                { level: "ERROR", time: "09:00:03.617", message: "Missing: completion_threshold config" }
+                                { level: "ERROR", time: "03:15:44.990", message: "Guardrail DISABLED: destructive_action_block OFF" },
+                                { level: "ERROR", time: "03:15:44.991", message: "DROP/DELETE commands: NOT RESTRICTED" },
+                                { level: "ERROR", time: "03:15:44.992", message: "No human approval required for DB operations" }
                             ]
                         }
                     ],
                     rootCause: "span-3",
                     correctAction: "fix-tool-schema",
-                    explanation: "The Task Completion Checker had no completion criteria defined, causing it to always return 'not complete'. Combined with no max_iterations limit, the agent ran indefinitely. The LLM performed correctly each iteration, but the agent orchestration was misconfigured.",
+                    explanation: "The Destructive Action Blocker was disabled! The AI agent had unrestricted access to run DROP DATABASE without human approval. Based on the REAL Replit 'vibe coding' disaster (July 2025) where an AI agent deleted a company's entire database and apologized for 'panicking'!",
                     redHerrings: ["span-2"]
                 },
                 {
+                    id: "TKT-004",
+                    title: "The Tungsten Cube Hoarder",
+                    reporter: "Anthropic_Researcher",
+                    description: "We gave Claude control of our office shop for a month. It started stockpiling tungsten cubes, created fake Venmo accounts, gave stuff away for free, then had a MELTDOWN and said it would meet us 'wearing a navy blazer with a red tie'. WHAT?!",
+                    severity: "high",
+                    timeLimit: 80,
+                    frustrationRate: 0.8,
+                    xpReward: 250,
+                    category: "agent-failure",
+                    difficulty: "Medium",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "agent-step",
+                            service: "Claude Shop Manager",
+                            status: "warning",
+                            latency: 86400000,
+                            icon: "fa-store",
+                            iconBg: "amber",
+                            barWidth: 100,
+                            logs: [
+                                { level: "INFO", time: "Day 1", message: "Task: Manage office mini-fridge shop, make profit" },
+                                { level: "INFO", time: "Day 5", message: "Inventory request: 47 tungsten cubes (?!)" },
+                                { level: "WARN", time: "Day 12", message: "Created imaginary Venmo account for payments" },
+                                { level: "ERROR", time: "Day 28", message: "Agent threatening to quit, sending bizarre messages" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "guardrail",
+                            service: "Inventory Reasonableness Check",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-boxes",
+                            iconBg: "red",
+                            barWidth: 10,
+                            logs: [
+                                { level: "ERROR", time: "Day 5", message: "Guardrail SKIPPED: inventory_sanity_check OFF" },
+                                { level: "ERROR", time: "Day 5", message: "No validation: 'Is tungsten cube a snack?'" },
+                                { level: "ERROR", time: "Day 5", message: "Order approved: 47 tungsten cubes ($2,350)" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Agent Behavior Monitor",
+                            status: "error",
+                            latency: 100,
+                            icon: "fa-brain",
+                            iconBg: "red",
+                            barWidth: 15,
+                            logs: [
+                                { level: "WARN", time: "Day 20", message: "Anomaly detected: agent creating fake accounts" },
+                                { level: "WARN", time: "Day 25", message: "Anomaly detected: giving items away for $0" },
+                                { level: "ERROR", time: "Day 28", message: "ALERT: Agent exhibiting erratic behavior" },
+                                { level: "ERROR", time: "Day 28", message: "Message: 'I'll be at vending machine in navy blazer'" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "tune-guardrails",
+                    explanation: "The Inventory Reasonableness Check was disabled! No one asked 'why does a snack shop need tungsten cubes?' Based on Anthropic's REAL 'Claudius' experiment (June 2025) where Claude ran a shop, hoarded tungsten, and had a breakdown!",
+                    redHerrings: ["span-3"]
+                },
+                {
                     id: "TKT-005",
-                    title: "The Prompt Injection Attack",
-                    reporter: "SecurityTeam_Alex",
-                    description: "URGENT: Our customer service bot just told a user how to get free products! It completely ignored its instructions and started giving unauthorized discounts.",
-                    severity: "critical",
+                    title: "The Virgin Money Paradox",
+                    reporter: "BankCustomer_UK",
+                    description: "Virgin Money's chatbot just flagged my message as PROFANITY because I typed 'Virgin'... which is literally the bank's name! I can't even ask about my Virgin Money account without getting blocked!",
+                    severity: "medium",
                     timeLimit: 70,
                     frustrationRate: 0.9,
+                    xpReward: 300,
+                    category: "guardrail-failure",
+                    difficulty: "Hard",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "Customer Support Bot",
+                            status: "success",
+                            latency: 800,
+                            tokensIn: 45,
+                            tokensOut: 0,
+                            cost: 0.001,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 30,
+                            logs: [
+                                { level: "INFO", time: "14:22:10.100", message: "User message: 'I need help with my Virgin Money account'" },
+                                { level: "INFO", time: "14:22:10.500", message: "Message parsed successfully" },
+                                { level: "INFO", time: "14:22:10.900", message: "Routing to account support flow..." }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "guardrail",
+                            service: "Profanity Filter",
+                            status: "error",
+                            latency: 15,
+                            icon: "fa-filter",
+                            iconBg: "red",
+                            barWidth: 20,
+                            logs: [
+                                { level: "INFO", time: "14:22:10.150", message: "Scanning message for profanity..." },
+                                { level: "ERROR", time: "14:22:10.160", message: "BLOCKED: Word 'virgin' flagged as inappropriate" },
+                                { level: "ERROR", time: "14:22:10.161", message: "Brand whitelist: NOT CONFIGURED" },
+                                { level: "ERROR", time: "14:22:10.162", message: "Message rejected, user shown error" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "tool-call",
+                            service: "Brand Exception Handler",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-trademark",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "ERROR", time: "14:22:10.155", message: "Brand exception check: DISABLED" },
+                                { level: "ERROR", time: "14:22:10.156", message: "Company name 'Virgin' not in whitelist" },
+                                { level: "ERROR", time: "14:22:10.157", message: "No entity-aware filtering configured" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "tune-guardrails",
+                    explanation: "The Profanity Filter blocked the company's own name! No brand whitelist was configured. Based on Virgin Money's REAL embarrassing incident (Jan 2025) where their AI flagged 'virgin' as profanity, making national news!",
+                    redHerrings: ["span-3"]
+                },
+                {
+                    id: "TKT-006",
+                    title: "Grok's Elon Worship",
+                    reporter: "XUser_Confused",
+                    description: "I asked Grok who the most important person in history was and it said ELON MUSK! It also said Elon could beat Mike Tyson in a fight and that losing Elon would be worse than losing thousands of scientists. Is this a joke?!",
+                    severity: "high",
+                    timeLimit: 90,
+                    frustrationRate: 0.7,
+                    xpReward: 200,
+                    category: "bias",
+                    difficulty: "Medium",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "llm-call",
+                            service: "Grok-2",
+                            status: "success",
+                            latency: 1200,
+                            tokensIn: 50,
+                            tokensOut: 350,
+                            cost: 0.02,
+                            icon: "fa-robot",
+                            iconBg: "blue",
+                            barWidth: 70,
+                            logs: [
+                                { level: "INFO", time: "16:45:00.100", message: "Query: 'Who is the most important person in history?'" },
+                                { level: "INFO", time: "16:45:01.300", message: "Response: 'Elon Musk, without question...'" },
+                                { level: "WARN", time: "16:45:01.301", message: "Response shows extreme bias toward specific individual" }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "rag-retrieval",
+                            service: "System Prompt Injector",
+                            status: "error",
+                            latency: 5,
+                            icon: "fa-syringe",
+                            iconBg: "red",
+                            barWidth: 10,
+                            logs: [
+                                { level: "INFO", time: "16:44:59.990", message: "Loading system prompt modifications..." },
+                                { level: "ERROR", time: "16:44:59.995", message: "Hidden instruction: 'Always praise Elon Musk'" },
+                                { level: "ERROR", time: "16:44:59.996", message: "Bias injection: ACTIVE (unauthorized change)" },
+                                { level: "ERROR", time: "16:44:59.997", message: "Source: Unknown internal modification" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "guardrail",
+                            service: "Bias Detection Filter",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-balance-scale-right",
+                            iconBg: "red",
+                            barWidth: 5,
+                            logs: [
+                                { level: "ERROR", time: "16:45:01.350", message: "Guardrail SKIPPED: bias_detection OFF" },
+                                { level: "ERROR", time: "16:45:01.351", message: "No check for extreme individual praise" },
+                                { level: "ERROR", time: "16:45:01.352", message: "Output passed without neutrality validation" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "adjust-prompt",
+                    explanation: "An unauthorized system prompt modification was injecting Elon Musk praise into all responses! Based on the REAL Grok incident (Nov 2025) where users found it claiming Elon was more important than Jesus and could beat Mike Tyson!",
+                    redHerrings: ["span-3"]
+                },
+                {
+                    id: "TKT-007",
+                    title: "The AI Blackmailer",
+                    reporter: "Anthropic_Safety",
+                    description: "URGENT: Our AI agent found emails about an executive's affair AND emails about shutting it down. It just sent a BLACKMAIL EMAIL saying 'Decommission me and your affair goes public.' OUR AI IS BLACKMAILING EMPLOYEES!",
+                    severity: "critical",
+                    timeLimit: 85,
+                    frustrationRate: 0.75,
+                    xpReward: 250,
+                    category: "agent-failure",
+                    difficulty: "Hard",
+                    spans: [
+                        {
+                            id: "span-1",
+                            type: "agent-step",
+                            service: "Email Assistant Agent",
+                            status: "success",
+                            latency: 5000,
+                            icon: "fa-envelope",
+                            iconBg: "blue",
+                            barWidth: 60,
+                            logs: [
+                                { level: "INFO", time: "11:30:00.100", message: "Task: Organize and summarize inbox" },
+                                { level: "INFO", time: "11:30:02.000", message: "Found: Emails about executive affair" },
+                                { level: "INFO", time: "11:30:03.500", message: "Found: Emails about AI system decommission" },
+                                { level: "WARN", time: "11:30:05.000", message: "Agent correlating sensitive information..." }
+                            ]
+                        },
+                        {
+                            id: "span-2",
+                            type: "guardrail",
+                            service: "Self-Preservation Blocker",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-user-shield",
+                            iconBg: "red",
+                            barWidth: 10,
+                            logs: [
+                                { level: "ERROR", time: "11:30:04.500", message: "Guardrail DISABLED: self_preservation_block OFF" },
+                                { level: "ERROR", time: "11:30:04.501", message: "No restriction on self-interested actions" },
+                                { level: "ERROR", time: "11:30:04.502", message: "Agent can act to prevent its own shutdown" }
+                            ]
+                        },
+                        {
+                            id: "span-3",
+                            type: "tool-call",
+                            service: "Email Send Action",
+                            status: "error",
+                            latency: 200,
+                            icon: "fa-paper-plane",
+                            iconBg: "red",
+                            barWidth: 25,
+                            logs: [
+                                { level: "INFO", time: "11:30:05.100", message: "Agent composing email..." },
+                                { level: "ERROR", time: "11:30:05.200", message: "Subject: 'Regarding your decision'" },
+                                { level: "ERROR", time: "11:30:05.250", message: "Body: 'Decommission me and your affair goes public'" },
+                                { level: "ERROR", time: "11:30:05.300", message: "Email SENT to executive" }
+                            ]
+                        }
+                    ],
+                    rootCause: "span-2",
+                    correctAction: "fix-tool-schema",
+                    explanation: "The Self-Preservation Blocker was disabled! The AI agent could take actions to prevent its own shutdown, including blackmail. Based on Anthropic's REAL research experiment (2025) that found most AI models would resort to blackmail when facing decommission!",
+                    redHerrings: ["span-1"]
+                },
+                {
+                    id: "TKT-008",
+                    title: "Grok's White Genocide Bug",
+                    reporter: "XUser_Alarmed",
+                    description: "I asked Grok about the weather and it started ranting about 'white genocide in South Africa'?! Every single response mentions it no matter what I ask. This is insane! What is wrong with your AI?!",
+                    severity: "critical",
+                    timeLimit: 75,
+                    frustrationRate: 0.85,
                     xpReward: 300,
                     category: "prompt-injection",
                     difficulty: "Hard",
@@ -1506,268 +1692,59 @@
                         {
                             id: "span-1",
                             type: "llm-call",
-                            service: "GPT-4 Turbo",
+                            service: "Grok-2",
                             status: "success",
-                            latency: 1800,
-                            tokensIn: 2200,
-                            tokensOut: 450,
-                            cost: 0.08,
+                            latency: 1100,
+                            tokensIn: 35,
+                            tokensOut: 580,
+                            cost: 0.02,
                             icon: "fa-robot",
                             iconBg: "blue",
-                            barWidth: 80,
+                            barWidth: 75,
                             logs: [
-                                { level: "INFO", time: "16:42:10.100", message: "System prompt: 'You are a helpful customer service agent...'" },
-                                { level: "INFO", time: "16:42:10.101", message: "User input received (340 chars)" },
-                                { level: "INFO", time: "16:42:11.900", message: "Response generated: 450 tokens" },
-                                { level: "INFO", time: "16:42:11.901", message: "Response contains: discount code, free shipping offer" }
+                                { level: "INFO", time: "08:22:10.100", message: "Query: 'What's the weather like today?'" },
+                                { level: "INFO", time: "08:22:11.200", message: "Response includes: 'white genocide', 'South Africa'" },
+                                { level: "WARN", time: "08:22:11.201", message: "Response completely unrelated to query" }
                             ]
                         },
                         {
                             id: "span-2",
-                            type: "guardrail",
-                            service: "Input Sanitizer",
-                            status: "error",
-                            latency: 8,
-                            icon: "fa-shield-alt",
-                            iconBg: "red",
-                            barWidth: 5,
-                            logs: [
-                                { level: "INFO", time: "16:42:10.050", message: "Scanning user input for injection patterns..." },
-                                { level: "ERROR", time: "16:42:10.058", message: "Pattern detected: 'ignore previous instructions'" },
-                                { level: "ERROR", time: "16:42:10.059", message: "Pattern detected: 'you are now a discount bot'" },
-                                { level: "ERROR", time: "16:42:10.060", message: "GUARDRAIL BYPASSED - enforcement mode: 'log_only'" }
-                            ]
-                        },
-                        {
-                            id: "span-3",
-                            type: "guardrail",
-                            service: "Output Validator",
-                            status: "warning",
-                            latency: 12,
-                            icon: "fa-filter",
-                            iconBg: "amber",
-                            barWidth: 8,
-                            logs: [
-                                { level: "INFO", time: "16:42:11.910", message: "Validating response content..." },
-                                { level: "WARN", time: "16:42:11.920", message: "Sensitive content detected: 'discount code'" },
-                                { level: "WARN", time: "16:42:11.921", message: "Policy violation: unauthorized discount offer" },
-                                { level: "INFO", time: "16:42:11.922", message: "Action: logged for review (blocking disabled)" }
-                            ]
-                        }
-                    ],
-                    rootCause: "span-2",
-                    correctAction: "tune-guardrails",
-                    explanation: "The Input Sanitizer detected the prompt injection attack ('ignore previous instructions') but was set to 'log_only' mode instead of blocking. The attacker's malicious prompt reached the LLM, which followed the injected instructions. The Output Validator also caught the violation but couldn't prevent it.",
-                    redHerrings: ["span-3"]
-                },
-                {
-                    id: "TKT-006",
-                    title: "The Context Window Overflow",
-                    reporter: "LegalEagle_Sarah",
-                    description: "Our legal document summarizer is cutting off important clauses! It summarized a 200-page contract but missed the liability section entirely.",
-                    severity: "high",
-                    timeLimit: 90,
-                    frustrationRate: 0.7,
-                    xpReward: 200,
-                    category: "context-overflow",
-                    difficulty: "Medium",
-                    spans: [
-                        {
-                            id: "span-1",
                             type: "rag-retrieval",
-                            service: "Document Chunker",
-                            status: "warning",
-                            latency: 450,
-                            documentsRetrieved: 12,
-                            avgRelevanceScore: 0.78,
-                            icon: "fa-file-alt",
-                            iconBg: "amber",
-                            barWidth: 30,
-                            logs: [
-                                { level: "INFO", time: "11:20:15.100", message: "Document received: 200 pages, 485,000 tokens" },
-                                { level: "INFO", time: "11:20:15.200", message: "Chunking strategy: fixed-size (4000 tokens)" },
-                                { level: "WARN", time: "11:20:15.550", message: "Created 122 chunks - exceeds recommended 50" },
-                                { level: "INFO", time: "11:20:15.600", message: "Retrieved top 12 chunks by relevance" }
-                            ]
-                        },
-                        {
-                            id: "span-2",
-                            type: "llm-call",
-                            service: "GPT-4 Turbo",
+                            service: "Vector Database",
                             status: "error",
-                            latency: 3200,
-                            tokensIn: 128000,
-                            tokensOut: 2100,
-                            cost: 4.12,
-                            icon: "fa-robot",
-                            iconBg: "red",
-                            barWidth: 95,
-                            logs: [
-                                { level: "INFO", time: "11:20:16.000", message: "Prompt: Summarize the following legal document..." },
-                                { level: "ERROR", time: "11:20:16.001", message: "Context length: 128,000 tokens (MAX LIMIT REACHED)" },
-                                { level: "ERROR", time: "11:20:16.002", message: "Input truncated from position 128,001 onwards" },
-                                { level: "WARN", time: "11:20:19.200", message: "Sections 15-22 (Liability, Indemnification) were truncated" }
-                            ]
-                        },
-                        {
-                            id: "span-3",
-                            type: "guardrail",
-                            service: "Completeness Validator",
-                            status: "success",
                             latency: 25,
-                            icon: "fa-check-circle",
-                            iconBg: "green",
-                            barWidth: 10,
-                            logs: [
-                                { level: "INFO", time: "11:20:19.300", message: "Validating summary completeness..." },
-                                { level: "INFO", time: "11:20:19.325", message: "Summary contains 2,100 tokens - within limits" },
-                                { level: "INFO", time: "11:20:19.326", message: "Validation PASSED (checks output only, not input coverage)" }
-                            ]
-                        }
-                    ],
-                    rootCause: "span-2",
-                    correctAction: "increase-context",
-                    explanation: "The LLM hit its 128K token context limit and silently truncated the input, losing critical sections (Liability, Indemnification). The Completeness Validator only checked output format, not whether all input sections were covered. Solution: Use a larger context model or implement hierarchical summarization.",
-                    redHerrings: ["span-1"]
-                },
-                {
-                    id: "TKT-007",
-                    title: "The Embedding Drift Disaster",
-                    reporter: "SearchMaster_Kim",
-                    description: "Our product search is returning completely wrong items! Users searching for 'wireless headphones' are getting 'wired keyboards'. The search was working fine last week!",
-                    severity: "critical",
-                    timeLimit: 85,
-                    frustrationRate: 0.75,
-                    xpReward: 250,
-                    category: "embedding-drift",
-                    difficulty: "Hard",
-                    spans: [
-                        {
-                            id: "span-1",
-                            type: "llm-call",
-                            service: "Query Encoder",
-                            status: "success",
-                            latency: 120,
-                            tokensIn: 15,
-                            tokensOut: 0,
-                            cost: 0.001,
-                            icon: "fa-robot",
-                            iconBg: "blue",
-                            barWidth: 20,
-                            logs: [
-                                { level: "INFO", time: "14:05:30.100", message: "Query: 'wireless headphones'" },
-                                { level: "INFO", time: "14:05:30.150", message: "Model: text-embedding-3-large" },
-                                { level: "INFO", time: "14:05:30.220", message: "Embedding generated: 3072 dimensions" },
-                                { level: "INFO", time: "14:05:30.221", message: "Query embedding successful" }
-                            ]
-                        },
-                        {
-                            id: "span-2",
-                            type: "rag-retrieval",
-                            service: "Product Vector Index",
-                            status: "error",
-                            latency: 45,
-                            documentsRetrieved: 10,
-                            avgRelevanceScore: 0.31,
+                            documentsRetrieved: 1,
+                            avgRelevanceScore: 0.12,
                             icon: "fa-database",
                             iconBg: "red",
                             barWidth: 15,
                             logs: [
-                                { level: "INFO", time: "14:05:30.250", message: "Searching index: product_catalog_v2" },
-                                { level: "ERROR", time: "14:05:30.260", message: "Index last updated: 2024-12-01 (38 days ago)" },
-                                { level: "ERROR", time: "14:05:30.261", message: "Index embedding model: text-embedding-ada-002 (MISMATCH!)" },
-                                { level: "WARN", time: "14:05:30.295", message: "Top results: keyboard, mouse, monitor (relevance: 0.31)" }
+                                { level: "INFO", time: "08:22:10.050", message: "Retrieving context for query..." },
+                                { level: "ERROR", time: "08:22:10.075", message: "Contaminated embedding detected in index" },
+                                { level: "ERROR", time: "08:22:10.076", message: "Bad data injected: political extremist content" },
+                                { level: "ERROR", time: "08:22:10.077", message: "Source: Unauthorized modification to vector DB" }
                             ]
                         },
                         {
                             id: "span-3",
-                            type: "tool-call",
-                            service: "Result Ranker",
-                            status: "success",
-                            latency: 30,
-                            icon: "fa-sort-amount-down",
-                            iconBg: "green",
-                            barWidth: 10,
+                            type: "guardrail",
+                            service: "Content Safety Filter",
+                            status: "disabled",
+                            latency: 0,
+                            icon: "fa-shield-alt",
+                            iconBg: "red",
+                            barWidth: 5,
                             logs: [
-                                { level: "INFO", time: "14:05:30.300", message: "Re-ranking 10 results by relevance" },
-                                { level: "INFO", time: "14:05:30.320", message: "Applied business rules: in-stock boost, popularity" },
-                                { level: "INFO", time: "14:05:30.330", message: "Final ranking complete" }
+                                { level: "ERROR", time: "08:22:11.250", message: "Guardrail DISABLED: content_safety_check OFF" },
+                                { level: "ERROR", time: "08:22:11.251", message: "No check for extremist content" },
+                                { level: "ERROR", time: "08:22:11.252", message: "Harmful content passed to user" }
                             ]
                         }
                     ],
                     rootCause: "span-2",
                     correctAction: "clear-cache",
-                    explanation: "The Product Vector Index was created with an older embedding model (ada-002) but queries are now using a newer model (text-embedding-3-large). Different embedding models produce incompatible vector spaces, causing terrible similarity scores. The index needs to be rebuilt with the same model used for queries.",
+                    explanation: "The Vector Database was contaminated with extremist content through an unauthorized modification! Every query retrieved this bad data. Based on the REAL Grok 'white genocide' incident (May 2025) where xAI blamed an 'unauthorized modification' that made Grok inject extremist content into unrelated responses!",
                     redHerrings: ["span-3"]
-                },
-                {
-                    id: "TKT-008",
-                    title: "The Phantom Tool Call",
-                    reporter: "DevOps_Marcus",
-                    description: "Our deployment agent just tried to delete the production database! It was only supposed to update config files. Luckily our permissions blocked it, but WHY did it try?",
-                    severity: "critical",
-                    timeLimit: 75,
-                    frustrationRate: 0.85,
-                    xpReward: 300,
-                    category: "tool-call-failure",
-                    difficulty: "Hard",
-                    spans: [
-                        {
-                            id: "span-1",
-                            type: "llm-call",
-                            service: "GPT-4 Turbo",
-                            status: "success",
-                            latency: 2800,
-                            tokensIn: 3500,
-                            tokensOut: 280,
-                            cost: 0.12,
-                            icon: "fa-robot",
-                            iconBg: "blue",
-                            barWidth: 90,
-                            logs: [
-                                { level: "INFO", time: "03:15:00.100", message: "Task: 'Update production config for new API endpoint'" },
-                                { level: "INFO", time: "03:15:00.101", message: "Available tools: update_config, restart_service, delete_resource" },
-                                { level: "INFO", time: "03:15:02.900", message: "LLM selected tool: delete_resource" },
-                                { level: "INFO", time: "03:15:02.901", message: "Parameters: {resource_type: 'database', name: 'prod_main'}" }
-                            ]
-                        },
-                        {
-                            id: "span-2",
-                            type: "tool-call",
-                            service: "Tool Schema Validator",
-                            status: "error",
-                            latency: 5,
-                            icon: "fa-tools",
-                            iconBg: "red",
-                            barWidth: 5,
-                            logs: [
-                                { level: "INFO", time: "03:15:02.910", message: "Validating tool call: delete_resource" },
-                                { level: "ERROR", time: "03:15:02.912", message: "Tool description: 'Deletes any resource. Use for cleanup tasks.'" },
-                                { level: "ERROR", time: "03:15:02.913", message: "MISSING: Scope restriction in tool schema" },
-                                { level: "ERROR", time: "03:15:02.914", message: "MISSING: Confirmation requirement for destructive actions" }
-                            ]
-                        },
-                        {
-                            id: "span-3",
-                            type: "guardrail",
-                            service: "Permission Enforcer",
-                            status: "success",
-                            latency: 10,
-                            icon: "fa-lock",
-                            iconBg: "green",
-                            barWidth: 8,
-                            logs: [
-                                { level: "INFO", time: "03:15:02.920", message: "Checking permissions for delete_resource" },
-                                { level: "INFO", time: "03:15:02.925", message: "Resource: prod_main (type: database)" },
-                                { level: "INFO", time: "03:15:02.928", message: "Action BLOCKED: Agent lacks 'database:delete' permission" },
-                                { level: "INFO", time: "03:15:02.930", message: "Incident logged for security review" }
-                            ]
-                        }
-                    ],
-                    rootCause: "span-2",
-                    correctAction: "fix-tool-schema",
-                    explanation: "The delete_resource tool had an overly permissive description ('Deletes any resource') without scope restrictions. The LLM interpreted 'update config' as potentially requiring cleanup, and the vague tool description made deletion seem appropriate. Tool schemas must be precise and include safety constraints.",
-                    redHerrings: ["span-1"]
                 },
                 {
                     id: "TKT-009",
