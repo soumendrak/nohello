@@ -1,0 +1,6 @@
+.lavish/
+.playwright-mcp/
+shot-*.png
+live-*.png
+node_modules/
+.wrangler/

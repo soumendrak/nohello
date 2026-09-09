@@ -1,0 +1,8 @@
+# Not part of the published site
+.lavish
+.git
+.gitignore
+.assetsignore
+justfile
+node_modules
+*.png.bak

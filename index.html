@@ -25,8 +25,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     
     <!-- Optimized font loading with display=swap -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"></noscript>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Instrument+Sans:wght@400;500;600;700&display=swap"></noscript>
     
     <style>
         body {
@@ -111,7 +111,7 @@
             right: 2rem;
             width: 3rem;
             height: 3rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #101418;
             color: white;
             border-radius: 50%;
             display: flex;
@@ -121,7 +121,7 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(16, 20, 24, 0.35);
             z-index: 1000;
         }
         
@@ -132,7 +132,7 @@
         
         .scroll-to-top:hover {
             transform: translateY(-4px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 6px 16px rgba(16, 20, 24, 0.5);
         }
         
         .scroll-to-top:active {
@@ -159,6 +159,116 @@
             opacity: 1;
             transform: translateY(0);
             will-change: auto;
+        }
+
+
+        /* ========================================
+           No Hello landing (nh- namespace)
+           ======================================== */
+        .nh{--nh-bg:#f3f4f6;--nh-paper:#fff;--nh-ink:#101418;--nh-mute:#5b6470;--nh-line:#dde1e6;
+            --nh-bad:#c62828;--nh-bad-bg:#fdecec;--nh-good:#1b7f4b;--nh-good-bg:#e7f5ec;
+            background:var(--nh-bg);color:var(--nh-ink);
+            font-family:'Instrument Sans','Inter',ui-sans-serif,system-ui,sans-serif;
+            font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+        .nh *{box-sizing:border-box}
+        .nh a{color:inherit}
+        .nh button{font:inherit;cursor:pointer}
+        .nh :focus-visible{outline:3px solid #2563eb;outline-offset:3px}
+        .nh-wrap{max-width:1180px;margin:auto;padding:0 32px}
+        .nh-nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+        .nh-brand{font-weight:700;letter-spacing:-.02em;text-decoration:none;font-size:20px}
+        .nh-brand b{color:var(--nh-bad)}
+        .nh-links{display:flex;gap:22px;align-items:center;font-size:14px}
+        .nh-links a{text-decoration:none;color:var(--nh-mute)}
+        .nh-links a:hover{color:var(--nh-ink)}
+        .nh-btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border-radius:8px;
+                border:1px solid var(--nh-ink);background:var(--nh-ink);color:#fff;font-weight:600;font-size:14px;
+                text-decoration:none}
+        .nh-btn.nh-ghost{background:transparent;color:var(--nh-ink);border-color:var(--nh-line)}
+        .nh-btn.nh-ghost:hover{border-color:var(--nh-ink)}
+        .nh-fold{padding:56px 0}
+        .nh-fold h1{font-size:clamp(34px,5vw,60px);line-height:1.02;letter-spacing:-.035em;font-weight:700;
+                    margin:0 0 14px;max-width:820px}
+        .nh-fold h1 em{font-style:normal;color:var(--nh-bad);text-decoration:line-through;text-decoration-thickness:.08em}
+        .nh-lead{font-size:18px;color:var(--nh-mute);margin:0 0 34px;max-width:640px}
+        .nh-lead strong{color:var(--nh-ink);font-weight:600}
+        .nh-windows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
+        .nh-win{background:var(--nh-paper);border:1px solid var(--nh-line);border-radius:12px;
+                box-shadow:0 1px 2px rgba(16,20,24,.04),0 12px 40px -20px rgba(16,20,24,.25);
+                overflow:hidden;min-width:0}
+        .nh-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--nh-line);
+                font-size:13px;color:var(--nh-mute)}
+        .nh-dots{display:flex;gap:5px}
+        .nh-dots i{width:10px;height:10px;border-radius:50%;background:#d6d9de;display:block}
+        .nh-who{margin-left:auto;font-weight:600;color:var(--nh-ink)}
+        .nh-verdict{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:13px;font-weight:600;
+                    letter-spacing:.02em;text-transform:uppercase}
+        .nh-verdict::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+        .nh-bad .nh-verdict{background:var(--nh-bad-bg);color:var(--nh-bad)}
+        .nh-good .nh-verdict{background:var(--nh-good-bg);color:var(--nh-good)}
+        .nh-chat{padding:16px;display:flex;flex-direction:column;gap:12px}
+        .nh-msg{display:flex;gap:10px;align-items:flex-end;max-width:88%}
+        .nh-msg.nh-me{align-self:flex-end;flex-direction:row-reverse}
+        .nh-good .nh-msg.nh-me{max-width:100%}
+        .nh-av{width:28px;height:28px;border-radius:50%;background:#e5e7eb;display:grid;place-items:center;
+               font-size:11px;font-weight:700;color:#374151;flex:none}
+        .nh-msg.nh-me .nh-av{background:#111827;color:#fff}
+        .nh-bubble{background:#f1f3f5;border-radius:14px;padding:10px 14px;font-size:15px;line-height:1.45;min-width:0}
+        .nh-msg.nh-me .nh-bubble{background:#111827;color:#fff}
+        .nh-bubble time{display:block;font-size:11px;opacity:.6;margin-top:6px}
+        .nh-spec{list-style:none;margin:12px 0 10px;padding:12px 0;
+                 border-top:1px solid rgba(255,255,255,.14);border-bottom:1px solid rgba(255,255,255,.14);
+                 display:grid;gap:7px;font-size:13.5px;line-height:1.42}
+        .nh-spec li{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:baseline}
+        .nh-spec b{font-size:10px;letter-spacing:.09em;text-transform:uppercase;opacity:.6;font-weight:700}
+        .nh-bubble code{font-family:'Monaco','Menlo',ui-monospace,monospace;font-size:12.5px;
+                        background:rgba(255,255,255,.12);padding:1px 5px;border-radius:4px}
+        .nh-gap{align-self:center;text-align:center;font-size:13px;color:var(--nh-bad);font-weight:600;
+                padding:12px 0;position:relative;width:100%}
+        .nh-gap::before,.nh-gap::after{content:"";position:absolute;top:50%;width:calc(50% - 100px);
+                                       border-top:1px dashed #e3a4a4}
+        .nh-gap::before{left:0}
+        .nh-gap::after{right:0}
+        .nh-good .nh-gap{color:var(--nh-good)}
+        .nh-good .nh-gap::before,.nh-good .nh-gap::after{border-color:#9fd3b3}
+        .nh-tally{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 16px;
+                  border-top:1px solid var(--nh-line);font-size:14px;color:var(--nh-mute)}
+        .nh-tally b{font-size:26px;letter-spacing:-.03em;font-weight:700}
+        .nh-bad .nh-tally b{color:var(--nh-bad)}
+        .nh-good .nh-tally b{color:var(--nh-good)}
+        .nh-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:26px;font-size:14px;
+                    color:var(--nh-mute)}
+        .nh-hint{margin-left:auto}
+        .nh-section{padding:56px 0;border-top:1px solid var(--nh-line)}
+        .nh-h2{font-size:26px;letter-spacing:-.03em;margin:0 0 6px;font-weight:700}
+        .nh-sub{color:var(--nh-mute);margin:0 0 26px}
+        .nh-rows{display:grid;gap:12px}
+        .nh-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:12px;align-items:start}
+        .nh-cell{background:var(--nh-paper);border:1px solid var(--nh-line);border-radius:10px;padding:14px 16px;
+                 font-size:15px;min-width:0}
+        .nh-cell small{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+                       margin-bottom:6px}
+        .nh-cell code{font-family:'Monaco','Menlo',ui-monospace,monospace;font-size:13px;background:#f1f3f5;
+                      padding:1px 5px;border-radius:4px}
+        .nh-cell.nh-b{border-left:3px solid var(--nh-bad)}
+        .nh-cell.nh-b small{color:var(--nh-bad)}
+        .nh-cell.nh-g{border-left:3px solid var(--nh-good)}
+        .nh-cell.nh-g small{color:var(--nh-good)}
+        .nh-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+        .nh-strip>div{background:var(--nh-paper);border:1px solid var(--nh-line);border-radius:10px;padding:18px}
+        .nh-strip b{display:block;margin-bottom:4px}
+        .nh-strip p{margin:0;color:var(--nh-mute);font-size:14px}
+        @media (max-width:480px){.nh-spec li{grid-template-columns:1fr;gap:2px}}
+        @media (max-width:860px){
+          .nh-wrap{padding:0 18px}
+          .nh-links a:not(.nh-btn){display:none}
+          .nh-windows,.nh-row,.nh-strip{grid-template-columns:1fr}
+          .nh-hint{margin-left:0}
+        }
+        @media (prefers-reduced-motion:no-preference){
+          .nh-win{animation:nh-up .5s ease both}
+          .nh-win.nh-good{animation-delay:.12s}
+          @keyframes nh-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
         }
 
         /* ========================================
@@ -551,248 +661,105 @@
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="min-h-screen flex items-center justify-center px-4 py-20 bg-gradient-to-br from-purple-50 via-white to-blue-50">
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="mb-8">
-                <i class="fas fa-comment-slash text-6xl text-purple-600 mb-6"></i>
+    <!-- Hero: two windows -->
+    <section class="nh">
+      <div class="nh-wrap">
+        <nav class="nh-nav">
+          <a class="nh-brand" href="#">no<b>hello</b></a>
+          <div class="nh-links">
+            <a href="#why">Why it matters</a>
+            <a href="#trace-master">Trace Master</a>
+            <button class="nh-btn nh-ghost" onclick="copyLink()"><i class="fas fa-link"></i> Copy link</button>
+          </div>
+        </nav>
+
+        <header class="nh-fold">
+          <h1>Don't send <em>&ldquo;hi&rdquo;</em> and wait.<br>Send the question.</h1>
+          <p class="nh-lead">A bare greeting is a phone call that puts the other person on hold. <strong>Put the hello and the whole problem in the same message</strong>, and a senior colleague can answer the moment they read it.</p>
+
+          <div class="nh-windows">
+            <div class="nh-win nh-bad" aria-label="What not to do">
+              <div class="nh-bar"><span class="nh-dots"><i></i><i></i><i></i></span>Slack &middot; Direct message<span class="nh-who">to Soumendra</span></div>
+              <div class="nh-verdict">Don't do this</div>
+              <div class="nh-chat">
+                <div class="nh-msg nh-me"><span class="nh-av">P</span><div class="nh-bubble">Hey Soumendra, you around?<time>2:31 PM</time></div></div>
+                <div class="nh-gap">14 minutes of silence</div>
+                <div class="nh-msg"><span class="nh-av">S</span><div class="nh-bubble">Hey! What's up?<time>2:45 PM</time></div></div>
+                <div class="nh-msg nh-me"><span class="nh-av">P</span><div class="nh-bubble">Got a question about our tracing pipeline, we're dropping spans<time>2:46 PM</time></div></div>
+                <div class="nh-msg"><span class="nh-av">S</span><div class="nh-bubble">Dropping how many? And what's the topology?<time>3:01 PM</time></div></div>
+                <div class="nh-gap">the actual question still hasn't been asked</div>
+              </div>
+              <div class="nh-tally"><span>4 messages in, still no diagnosis</span><b>31+ min</b></div>
             </div>
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 gradient-text">
-                Please Don't Say Just Hello
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto">
-                Imagine calling someone on the phone, saying "hello," and then putting them on hold. That's what you're doing when you say just "hello" in chat.
-            </p>
-            <a href="#why" class="inline-flex items-center gap-2 bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl">
-                Learn Why
-                <i class="fas fa-arrow-down scroll-indicator"></i>
-            </a>
-        </div>
+
+            <div class="nh-win nh-good" aria-label="What to do instead">
+              <div class="nh-bar"><span class="nh-dots"><i></i><i></i><i></i></span>Slack &middot; Direct message<span class="nh-who">to Soumendra</span></div>
+              <div class="nh-verdict">Do this instead</div>
+              <div class="nh-chat">
+                <div class="nh-msg nh-me"><span class="nh-av">P</span><div class="nh-bubble">
+                  Hey Soumendra! We hit a wall in the tracing pipeline: everything is clean up to ~15k spans/s, and past that we start dropping spans. Could you help me find the bottleneck?
+                  <ul class="nh-spec">
+                    <li><b>Symptom</b> <span>clean to 15k spans/s, then drops start. ~22% lost at 20k peak. Collector logs <code>sending_queue is full</code>, exporter p99 4.8s.</span></li>
+                    <li><b>Setup</b> <span>app SDK (batch 512) &rarr; 3&times; OTel collector (tail_sampling, 30s decision wait) &rarr; Kafka &rarr; ClickHouse.</span></li>
+                    <li><b>Tried</b> <span>queue 2k &rarr; 10k and +2 replicas: moved the ceiling from 11k to 15k, nothing more. ClickHouse ingest lag flat and CPU at 40%, so storage isn't the constraint.</span></li>
+                    <li><b>Hypothesis</b> <span>tail sampling holds every trace in memory for the full 30s decision wait, so the collector is memory-bound, not CPU-bound.</span></li>
+                    <li><b>Ask</b> <span>is a load-balancing exporter sharding by trace ID the right fix, or should sampling move downstream of Kafka? Anytime before Thursday's design review.</span></li>
+                  </ul>
+                  Grafana board and collector config in the thread.
+                  <time>2:31 PM</time></div></div>
+                <div class="nh-gap">answered on first read</div>
+                <div class="nh-msg"><span class="nh-av">S</span><div class="nh-bubble">Memory-bound is right. Put a load-balancing exporter in front and route by trace ID, so each collector only holds its own shard. That alone should take you past 40k. And cut the decision wait to 10s while you're in there, 30s is 3&times; the memory for no extra accuracy at your trace lengths. Config diff + our runbook: [link]<time>2:45 PM</time></div></div>
+              </div>
+              <div class="nh-tally"><span>1 message in, root cause and a fix</span><b>0 extra</b></div>
+            </div>
+          </div>
+
+          <div class="nh-actions">
+            <button class="nh-btn" onclick="copyTemplate()"><i class="fas fa-clipboard"></i> Copy a message template</button>
+            <a class="nh-btn nh-ghost" href="#examples">See more examples</a>
+            <span class="nh-hint">Works the same in Slack, Teams, and email.</span>
+          </div>
+        </header>
+      </div>
     </section>
 
-    <!-- Problem Demonstration -->
-    <section id="why" class="py-20 px-4 bg-white">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
-                The Problem
-            </h2>
-            
-            <div class="grid md:grid-cols-2 gap-8 mb-16">
-                <!-- Bad Example -->
-                <div class="comparison-card bg-red-50 border-2 border-red-200 rounded-2xl p-8 scroll-fade-in">
-                    <div class="flex items-center gap-3 mb-6">
-                        <i class="fas fa-times-circle text-3xl text-red-600"></i>
-                        <h3 class="text-2xl font-bold text-red-900">Don't Do This</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-8 h-8 bg-red-300 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-red-700 text-sm"></i>
-                                </div>
-                                <span class="font-semibold text-sm">You</span>
-                                <span class="text-xs text-gray-500">2:31 PM</span>
-                            </div>
-                            <p class="text-gray-800">Hi Soumendra</p>
-                        </div>
-                        
-                        <div class="chat-bubble bg-gray-100 rounded-lg p-4 flex items-center gap-2">
-                            <div class="typing-indicator">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <span class="text-sm text-gray-500 ml-2">waiting for response...</span>
-                        </div>
-                        
-                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-blue-700 text-sm"></i>
-                                </div>
-                                <span class="font-semibold text-sm">Soumendra</span>
-                                <span class="text-xs text-gray-500">2:45 PM</span>
-                            </div>
-                            <p class="text-gray-800">Hi! What's up?</p>
-                        </div>
-                        
-                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-8 h-8 bg-red-300 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-red-700 text-sm"></i>
-                                </div>
-                                <span class="font-semibold text-sm">You</span>
-                                <span class="text-xs text-gray-500">2:46 PM</span>
-                            </div>
-                            <p class="text-gray-800">Can you help me with the observability platform access?</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 p-4 bg-red-100 rounded-lg">
-                        <p class="text-sm text-red-800">
-                            <i class="fas fa-clock mr-2"></i>
-                            <strong>15 minutes wasted</strong> waiting for a response
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Good Example -->
-                <div class="comparison-card bg-green-50 border-2 border-green-200 rounded-2xl p-8 scroll-fade-in">
-                    <div class="flex items-center gap-3 mb-6">
-                        <i class="fas fa-check-circle text-3xl text-green-600"></i>
-                        <h3 class="text-2xl font-bold text-green-900">Do This Instead</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-8 h-8 bg-green-300 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-green-700 text-sm"></i>
-                                </div>
-                                <span class="font-semibold text-sm">You</span>
-                                <span class="text-xs text-gray-500">2:31 PM</span>
-                            </div>
-                            <p class="text-gray-800">Hi Soumendra! Can you help me get access to the AI observability platform? I need to integrate it for our Agentic AI project. My team name is 007 Agent Builders and my email is bruce@agenticai.com</p>
-                        </div>
-                        
-                        <div class="chat-bubble bg-white rounded-lg p-4 shadow-sm">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-8 h-8 bg-blue-300 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-blue-700 text-sm"></i>
-                                </div>
-                                <span class="font-semibold text-sm">Soumendra</span>
-                                <span class="text-xs text-gray-500">2:45 PM</span>
-                            </div>
-                            <p class="text-gray-800">Sure! I'll create your account and send you the API keys. You can start with our quickstart guide here: [link]</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 p-4 bg-green-100 rounded-lg">
-                        <p class="text-sm text-green-800">
-                            <i class="fas fa-bolt mr-2"></i>
-                            <strong>Efficient communication</strong> - problem solved immediately
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <!-- More rewrites -->
+    <section class="nh nh-section" id="examples">
+      <div class="nh-wrap">
+        <h2 class="nh-h2">Three more rewrites</h2>
+        <p class="nh-sub">Same politeness. The problem, the evidence, and the ask arrive with the hello.</p>
+        <div class="nh-rows">
+          <div class="nh-row">
+            <div class="nh-cell nh-b"><small>Don't</small>&ldquo;Hey, are you there?&rdquo;</div>
+            <div class="nh-cell nh-g"><small>Do</small>&ldquo;Hey! Our trace sampling rate dropped from 10% to 0.4% after the collector upgrade to 0.98. Did the <code>probabilistic_sampler</code> config schema change? Rollback is ready either way, no rush today.&rdquo;</div>
+          </div>
+          <div class="nh-row">
+            <div class="nh-cell nh-b"><small>Don't</small>&ldquo;Do you have a minute?&rdquo;</div>
+            <div class="nh-cell nh-g"><small>Do</small>&ldquo;I need a second opinion on cardinality. We're at 2.1M active series and Mimir ingesters are OOMing weekly. Leaning toward dropping <code>pod_id</code> from the RED metrics. Can you poke holes in that before I write the RFC?&rdquo;</div>
+          </div>
+          <div class="nh-row">
+            <div class="nh-cell nh-b"><small>Don't</small>&ldquo;Ping&rdquo;</div>
+            <div class="nh-cell nh-g"><small>Do</small>&ldquo;Prod alert: agent traces stop mid-run with no error span. Ruled out timeouts (context deadline is 120s, runs die at ~40s) and OOM (memory flat). Suspect the exporter drops on batch overflow. Anything you've seen like this? Incident channel is #inc-4471.&rdquo;</div>
+          </div>
         </div>
+      </div>
     </section>
 
-    <!-- Why This Matters -->
-    <section class="py-20 px-4 bg-gray-50">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 scroll-fade-in">
-                Why This Matters
-            </h2>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl p-8 shadow-lg scroll-fade-in">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-clock text-2xl text-purple-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Respects Time</h3>
-                    <p class="text-gray-600">
-                        Your colleague can respond when available without being held hostage by a conversation that hasn't started yet.
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-xl p-8 shadow-lg scroll-fade-in">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-globe text-2xl text-blue-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Async-First</h3>
-                    <p class="text-gray-600">
-                        Remote teams work across time zones. Async communication means providing context upfront, not waiting for acknowledgment.
-                    </p>
-                </div>
-                
-                <div class="bg-white rounded-xl p-8 shadow-lg scroll-fade-in">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-brain text-2xl text-green-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Better Focus</h3>
-                    <p class="text-gray-600">
-                        Reduces context switching. Your colleague can read your full message and respond thoughtfully in one go.
-                    </p>
-                </div>
-            </div>
+    <!-- Why it matters -->
+    <section class="nh nh-section" id="why">
+      <div class="nh-wrap">
+        <h2 class="nh-h2">Why it matters</h2>
+        <p class="nh-sub">This is about respect for time, not about being cold. Say hello. Just keep going.</p>
+        <div class="nh-strip">
+          <div><b>Respects their time</b><p>They reply when free instead of being held hostage by a chat that hasn't started.</p></div>
+          <div><b>Works across time zones</b><p>Context up front means one round trip, not three, even overnight.</p></div>
+          <div><b>Fewer interruptions</b><p>One complete message, one thoughtful reply. No context switching.</p></div>
         </div>
-    </section>
-
-    <!-- More Examples -->
-    <section class="py-20 px-4 bg-white">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 scroll-fade-in">
-                More Examples
-            </h2>
-            
-            <div class="space-y-8">
-                <!-- Example 1 -->
-                <div class="grid md:grid-cols-2 gap-6 scroll-fade-in">
-                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-times text-red-600"></i>
-                            <span class="font-bold text-red-900">Bad</span>
-                        </div>
-                        <p class="text-gray-800">"Hey Soumendra, are you there?"</p>
-                        <p class="text-sm text-gray-600 mt-2 italic">Forces synchronous response</p>
-                    </div>
-                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-check text-green-600"></i>
-                            <span class="font-bold text-green-900">Good</span>
-                        </div>
-                        <p class="text-gray-800">"Hey Soumendra! Quick question - where can I find the API documentation for integrating the observability SDK with our Python project?"</p>
-                        <p class="text-sm text-gray-600 mt-2 italic">Can be answered anytime</p>
-                    </div>
-                </div>
-                
-                <!-- Example 2 -->
-                <div class="grid md:grid-cols-2 gap-6 scroll-fade-in">
-                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-times text-red-600"></i>
-                            <span class="font-bold text-red-900">Bad</span>
-                        </div>
-                        <p class="text-gray-800">"Hi Soumendra, do you have a minute?"</p>
-                        <p class="text-sm text-gray-600 mt-2 italic">Vague and anxiety-inducing</p>
-                    </div>
-                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-check text-green-600"></i>
-                            <span class="font-bold text-green-900">Good</span>
-                        </div>
-                        <p class="text-gray-800">"Hi Soumendra! I need help integrating observability into our RAG pipeline. We're using LangChain with GPT-4. Can you share the integration guide when you have 10 minutes?"</p>
-                        <p class="text-sm text-gray-600 mt-2 italic">Clear context and expectations</p>
-                    </div>
-                </div>
-                
-                <!-- Example 3 -->
-                <div class="grid md:grid-cols-2 gap-6 scroll-fade-in">
-                    <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-times text-red-600"></i>
-                            <span class="font-bold text-red-900">Bad</span>
-                        </div>
-                        <p class="text-gray-800">"Ping"</p>
-                        <p class="text-sm text-gray-600 mt-2 italic">No context about what you need</p>
-                    </div>
-                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
-                        <div class="flex items-center gap-2 mb-3">
-                            <i class="fas fa-check text-green-600"></i>
-                            <span class="font-bold text-green-900">Good</span>
-                        </div>
-                        <p class="text-gray-800">"Our observability dashboard is showing 'API key invalid' errors. I've checked the key in our .env file and it looks correct. Can you help troubleshoot? Project: customer-support-bot"</p>
-                        <p class="text-sm text-gray-600 mt-2 italic">Actionable with context</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </section>
 
     <!-- Call to Action -->
-    <section class="py-20 px-4 bg-gradient-to-br from-purple-600 to-blue-600 text-white">
+    <section class="py-20 px-4 bg-gray-900 text-white">
         <div class="max-w-4xl mx-auto text-center">
             <h2 class="text-4xl md:text-5xl font-bold mb-6">
                 Spread the Word
@@ -802,11 +769,11 @@
             </p>
             
             <div class="flex flex-wrap justify-center gap-4 mb-12">
-                <button onclick="copyLink()" class="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2">
+                <button onclick="copyLink()" class="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2">
                     <i class="fas fa-link"></i>
                     Copy Link
                 </button>
-                <a href="https://twitter.com/intent/tweet?text=Please%20don%27t%20say%20just%20hello%20in%20chat.%20Ask%20your%20question%20directly!&url=" target="_blank" rel="noopener" class="bg-white text-blue-500 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2">
+                <a href="https://twitter.com/intent/tweet?text=Please%20don%27t%20say%20just%20hello%20in%20chat.%20Ask%20your%20question%20directly!&url=" target="_blank" rel="noopener" class="bg-white text-gray-900 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-2">
                     <i class="fab fa-twitter"></i>
                     Share on Twitter
                 </a>
@@ -1169,6 +1136,25 @@
         }
 
         // Copy link functionality
+        function copyTemplate() {
+            const template = [
+                'Hi <name>! <one-line problem + why I am asking you>.',
+                '',
+                'Symptom: <what you observe, with numbers>',
+                'Setup: <topology / versions / scale>',
+                'Tried: <what you ruled out and how>',
+                'Hypothesis: <your current theory>',
+                'Ask: <the specific decision or pointer you need> - <when a reply would help>'
+            ].join('\n');
+            navigator.clipboard.writeText(template).then(() => {
+                const notification = document.getElementById('copyNotification');
+                if (!notification) return;
+                notification.innerHTML = '<i class="fas fa-check mr-2"></i>Message template copied!';
+                notification.classList.remove('hidden');
+                setTimeout(() => notification.classList.add('hidden'), 2000);
+            });
+        }
+
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
                 const notification = document.getElementById('copyNotification');
