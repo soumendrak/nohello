@@ -30,6 +30,10 @@ Simply open `index.html` in a browser. No build process required - all dependenc
 
 Help spread better communication habits by sharing this page with your team!
 
+## Sponsor
+
+If this project helps you, consider [sponsoring my work on GitHub](https://github.com/sponsors/soumendrak). Your support helps fund maintenance, documentation, and continued development.
+
 ## Credits
 
 Inspired by [nohello.net](https://nohello.net) and the async-first communication movement.
